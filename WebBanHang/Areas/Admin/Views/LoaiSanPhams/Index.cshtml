@@ -1,0 +1,56 @@
+﻿@model IEnumerable<WebBanHang.Models.LoaiSanPham>
+
+@{
+    ViewData["Title"] = "Quản lý loại sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <h2 class="header-title">Quản lý loại sản phẩm</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <span class="breadcrumb-item active">Loại sản phẩm</span>
+        </nav>
+    </div>
+</div>
+<hr />
+
+<div class="card">
+    <div class="card-body">
+        <p>
+            <a asp-action="Create">Thêm mới</a>
+        </p>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Tên</th>
+                        <th scope="col">Mô tả</th>
+                        <th scope="col">#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <th scope="row">@item.MaLoai</th>
+                                <td>@item.TenLoai</td>
+                                <td>@item.MoTa</td>
+                                <td>
+                                    <a class="btn btn-info btn-tone m-r-5" asp-area="Admin" asp-controller="LoaiSanPhams" asp-action="Details" asp-route-id="@item.MaLoai">Xem</a>
+                                    <a class="btn btn-warning btn-tone m-r-5" asp-area="Admin" asp-controller="LoaiSanPhams" asp-action="Edit" asp-route-id="@item.MaLoai">Sửa</a>
+                                    <a class="btn btn-danger btn-tone m-r-5" asp-area="Admin" asp-controller="LoaiSanPhams" asp-action="Delete" asp-route-id="@item.MaLoai">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

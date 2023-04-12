@@ -13,6 +13,18 @@
                     </span>
                 </a>
             </li>
+            @*Quản lý loại sản phẩm*@
+            <li class="nav-item">
+                <a class="dropdown-toggle" asp-area="Admin" asp-controller="LoaiSanPhams" asp-action="Index">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-appstore"></i>
+                    </span>
+                    <span class="title">QL loại sản phẩm</span>
+                    <span class="arrow">
+                        <i class="arrow-icon"></i>
+                    </span>
+                </a>
+            </li>
             @*Quản lý đơn hàng*@
             <li class="nav-item dropdown">
                 <a class="dropdown-toggle" href="javascript:void(0);">
@@ -189,7 +201,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="basic-table.html">Quản lý danh mục</a>
+                        <a asp-area="Admin" asp-controller="LoaiSanPhams" asp-action="Index">Quản lý loại sản phẩm</a>
                     </li>
                     <li>
                         <a href="basic-table.html">Quản lý tài khoản</a>

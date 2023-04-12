@@ -30,7 +30,7 @@ namespace WebBanHang
         {
             //connection string
             var stringConnectdb = Configuration.GetConnectionString("dbBanHang");
-            services.AddDbContext<dbMarketsContext>(options => options.UseSqlServer(stringConnectdb));
+            services.AddDbContext<dbBanHangContext>(options => options.UseSqlServer(stringConnectdb));
             //unicode
             services.AddSingleton<HtmlEncoder>(HtmlEncoder.Create(allowedRanges: new[] {UnicodeRanges.All}));
 
