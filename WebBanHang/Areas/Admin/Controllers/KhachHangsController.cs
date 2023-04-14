@@ -2,33 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using PagedList.Core;
 using WebBanHang.Models;
 
 namespace WebBanHang.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class LoaiSanPhamsController : Controller
+    public class KhachHangsController : Controller
     {
         private readonly dbBanHangContext _context;
-        public INotyfService _notyfService { get;}
 
-        public LoaiSanPhamsController(dbBanHangContext context, INotyfService notyfService)
+        public KhachHangsController(dbBanHangContext context)
         {
             _context = context;
-            _notyfService =notyfService;
         }
 
-        // GET: Admin/LoaiSanPhams
-        public async Task<IActionResult> Index()
+        // GET: Admin/KhachHangs
+        public async Task<IActionResult> Index(int? page)
         {
-            return View(await _context.LoaiSanPhams.ToListAsync());
+            //filter
+            List<SelectListItem> lsBlock = new List<SelectListItem>();
+            lsBlock.Add(new SelectListItem() { Text = "Hoạt động", Value = "false" });
+            lsBlock.Add(new SelectListItem() { Text = "Khóa", Value = "true" });
+            ViewData["lsBlock"] = lsBlock;
+
+            //page
+            var pageNumber = page == null || page < 0 ? 1 : page.Value;
+            var pageSize = 20;
+            var lsCustomers = _context.KhachHangs.AsNoTracking()
+                .OrderByDescending(x => x.MaKh);
+            PagedList<KhachHang> models = new PagedList<KhachHang>(lsCustomers, pageNumber, pageSize);
+
+            ViewBag.CurrentPage = pageNumber;
+
+            //var dbBanHangContext = _context.KhachHangs;
+            return View(models);
         }
 
-        // GET: Admin/LoaiSanPhams/Details/5
+        // GET: Admin/KhachHangs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,40 +50,39 @@ namespace WebBanHang.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var loaiSanPham = await _context.LoaiSanPhams
-                .FirstOrDefaultAsync(m => m.MaLoai == id);
-            if (loaiSanPham == null)
+            var khachHang = await _context.KhachHangs
+                .FirstOrDefaultAsync(m => m.MaKh == id);
+            if (khachHang == null)
             {
                 return NotFound();
             }
 
-            return View(loaiSanPham);
+            return View(khachHang);
         }
 
-        // GET: Admin/LoaiSanPhams/Create
+        // GET: Admin/KhachHangs/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/LoaiSanPhams/Create
+        // POST: Admin/KhachHangs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaLoai,TenLoai,MoTa")] LoaiSanPham loaiSanPham)
+        public async Task<IActionResult> Create([Bind("MaKh,TenKh,Email,Sdt,MatKhau,DiaChi,Khoa")] KhachHang khachHang)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(loaiSanPham);
+                _context.Add(khachHang);
                 await _context.SaveChangesAsync();
-                _notyfService.Success("Tạo mới thành công");
                 return RedirectToAction(nameof(Index));
             }
-            return View(loaiSanPham);
+            return View(khachHang);
         }
 
-        // GET: Admin/LoaiSanPhams/Edit/5
+        // GET: Admin/KhachHangs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,22 +90,22 @@ namespace WebBanHang.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var loaiSanPham = await _context.LoaiSanPhams.FindAsync(id);
-            if (loaiSanPham == null)
+            var khachHang = await _context.KhachHangs.FindAsync(id);
+            if (khachHang == null)
             {
                 return NotFound();
             }
-            return View(loaiSanPham);
+            return View(khachHang);
         }
 
-        // POST: Admin/LoaiSanPhams/Edit/5
+        // POST: Admin/KhachHangs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaLoai,TenLoai,MoTa")] LoaiSanPham loaiSanPham)
+        public async Task<IActionResult> Edit(int id, [Bind("MaKh,TenKh,Email,Sdt,MatKhau,DiaChi,Khoa")] KhachHang khachHang)
         {
-            if (id != loaiSanPham.MaLoai)
+            if (id != khachHang.MaKh)
             {
                 return NotFound();
             }
@@ -101,15 +114,13 @@ namespace WebBanHang.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(loaiSanPham);
+                    _context.Update(khachHang);
                     await _context.SaveChangesAsync();
-                    _notyfService.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LoaiSanPhamExists(loaiSanPham.MaLoai))
+                    if (!KhachHangExists(khachHang.MaKh))
                     {
-                        _notyfService.Warning("Có lỗi xảy ra");
                         return NotFound();
                     }
                     else
@@ -119,10 +130,10 @@ namespace WebBanHang.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(loaiSanPham);
+            return View(khachHang);
         }
 
-        // GET: Admin/LoaiSanPhams/Delete/5
+        // GET: Admin/KhachHangs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,31 +141,30 @@ namespace WebBanHang.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var loaiSanPham = await _context.LoaiSanPhams
-                .FirstOrDefaultAsync(m => m.MaLoai == id);
-            if (loaiSanPham == null)
+            var khachHang = await _context.KhachHangs
+                .FirstOrDefaultAsync(m => m.MaKh == id);
+            if (khachHang == null)
             {
                 return NotFound();
             }
 
-            return View(loaiSanPham);
+            return View(khachHang);
         }
 
-        // POST: Admin/LoaiSanPhams/Delete/5
+        // POST: Admin/KhachHangs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var loaiSanPham = await _context.LoaiSanPhams.FindAsync(id);
-            _context.LoaiSanPhams.Remove(loaiSanPham);
+            var khachHang = await _context.KhachHangs.FindAsync(id);
+            _context.KhachHangs.Remove(khachHang);
             await _context.SaveChangesAsync();
-            _notyfService.Success("Xóa thành công");
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LoaiSanPhamExists(int id)
+        private bool KhachHangExists(int id)
         {
-            return _context.LoaiSanPhams.Any(e => e.MaLoai == id);
+            return _context.KhachHangs.Any(e => e.MaKh == id);
         }
     }
 }

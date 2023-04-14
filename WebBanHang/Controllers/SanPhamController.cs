@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using WebBanHang.Models;
 
@@ -17,7 +18,8 @@ namespace WebBanHang.Controllers
         }
         public IActionResult Detail(int id)
         {
-            var product = _context.SanPhams.FirstOrDefault(x => x.MaSp == id);
+            //include???
+            var product = _context.SanPhams.Include(x=>x.MaLoaiNavigation).FirstOrDefault(x => x.MaSp == id);
             if (product == null)
             {
                 return RedirectToAction("Index");
