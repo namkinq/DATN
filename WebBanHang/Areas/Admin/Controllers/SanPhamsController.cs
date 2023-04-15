@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PagedList.Core;
+using WebBanHang.Helper;
 using WebBanHang.Models;
 
 namespace WebBanHang.Areas.Admin.Controllers
@@ -114,10 +116,19 @@ namespace WebBanHang.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaSp,TenSp,GiaBan,GiaGiam,SoLuongCo,Anh,CongSuat,KhoiLuong,MoTa,BaoHanh,MaLoai,MaTh")] SanPham sanPham)
+        public async Task<IActionResult> Create([Bind("MaSp,TenSp,GiaBan,GiaGiam,SoLuongCo,Anh,CongSuat,KhoiLuong,MoTa,BaoHanh,MaLoai,MaTh")] SanPham sanPham, Microsoft.AspNetCore.Http.IFormFile fAnh)
         {
             if (ModelState.IsValid)
             {
+                sanPham.TenSp = Utilities.ToTitleCase(sanPham.TenSp);
+                if(fAnh != null)
+                {
+                    string extension = Path.GetExtension(fAnh.FileName);
+                    string img = Utilities.SEOUrl(sanPham.TenSp) + extension;
+                    sanPham.Anh = await Utilities.UploadFile(fAnh, @"sanpham", img.ToLower());
+                }
+                if (string.IsNullOrEmpty(sanPham.TenSp)) sanPham.Anh = "default.jpg";
+
                 _context.Add(sanPham);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -150,7 +161,7 @@ namespace WebBanHang.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaSp,TenSp,GiaBan,GiaGiam,SoLuongCo,Anh,CongSuat,KhoiLuong,MoTa,BaoHanh,MaLoai,MaTh")] SanPham sanPham)
+        public async Task<IActionResult> Edit(int id, [Bind("MaSp,TenSp,GiaBan,GiaGiam,SoLuongCo,Anh,CongSuat,KhoiLuong,MoTa,BaoHanh,MaLoai,MaTh")] SanPham sanPham, Microsoft.AspNetCore.Http.IFormFile fAnh)
         {
             if (id != sanPham.MaSp)
             {
@@ -161,6 +172,15 @@ namespace WebBanHang.Areas.Admin.Controllers
             {
                 try
                 {
+                    sanPham.TenSp = Utilities.ToTitleCase(sanPham.TenSp);
+                    if (fAnh != null)
+                    {
+                        string extension = Path.GetExtension(fAnh.FileName);
+                        string img = Utilities.SEOUrl(sanPham.TenSp) + extension;
+                        sanPham.Anh = await Utilities.UploadFile(fAnh, @"sanpham", img.ToLower());
+                    }
+                    if (string.IsNullOrEmpty(sanPham.TenSp)) sanPham.Anh = "default.jpg";
+
                     _context.Update(sanPham);
                     await _context.SaveChangesAsync();
                 }
