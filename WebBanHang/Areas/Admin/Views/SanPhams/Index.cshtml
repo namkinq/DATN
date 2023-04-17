@@ -33,11 +33,17 @@
                             <option value="0">Tất cả</option>
                         </select>
                     </div>
-                    <div class="m-b-10">
+                    <div class="m-b-10 m-r-15">
                         <select class="custom-select" style="min-width: 170px;" id="txtStt" name="txtStt" asp-items="ViewBag.lsQuantityStt">
                             <option selected>-Chọn trạng thái-</option>
                             <option value="0">Tất cả</option>
                         </select>
+                    </div>
+                    <div class="m-b-10 ">
+                        <div class="input-affix">
+                            <i class="prefix-icon anticon anticon-search opacity-04"></i>
+                            <input id="searchKey" name="searchKey" type="text" class="form-control" placeholder="Tìm">
+                        </div>
                     </div>
 
                 </div>
@@ -66,7 +72,7 @@
                         <th>#</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="records_table">
                     @if (Model != null)
                     {
                         foreach (var item in Model)
@@ -80,7 +86,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img class="img-fluid rounded" src="@item.Anh" style="max-width: 60px" alt="img">
+                                        <img class="img-fluid rounded" src="~/images/sanpham/@item.Anh" style="max-width: 60px" alt="img">
                                     </div>
                                 </td>
 
@@ -159,6 +165,27 @@
                         }
                     },
                     error: function(xhr){
+                        alert('error');
+                    }
+                });
+            });
+
+            $("#searchKey").keyup(function () {
+                var strSearchKey = $("#searchKey").val();
+                $.ajax({
+                    url: '/Admin/Search/TimSanPham/',
+                    datatype: "json",
+                    type: "POST",
+                    data: {
+                        searchKey: strSearchKey
+                    },
+                    async: true,
+                    success: function (results) {
+                        //$('#loader').hide();
+                        $('#records_table').html("");
+                        $('#records_table').html(results);
+                    },
+                    error: function (xhr) {
                         alert('error');
                     }
                 });

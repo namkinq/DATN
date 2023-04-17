@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -13,6 +14,7 @@ namespace WebBanHang.Models
         }
 
         public int MaSp { get; set; }
+        [Required(ErrorMessage="Tên sản phẩm không được để trống")]
         public string TenSp { get; set; }
         public int? GiaBan { get; set; }
         public int? GiaGiam { get; set; }

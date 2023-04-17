@@ -105,6 +105,13 @@ namespace WebBanHang.Helper
 
             return sb.ToString();
         }
+
+        public static string RandomGuid()
+        {
+            System.Guid guid = System.Guid.NewGuid();
+
+            return guid.ToString();
+        }
         public static string SEOUrl(string url)
         {
             url = url.ToLower();

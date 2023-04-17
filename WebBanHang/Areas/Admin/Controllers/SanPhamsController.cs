@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,25 +17,22 @@ namespace WebBanHang.Areas.Admin.Controllers
     public class SanPhamsController : Controller
     {
         private readonly dbBanHangContext _context;
+        public INotyfService _notyfService { get; }
 
-        public SanPhamsController(dbBanHangContext context)
+        public SanPhamsController(dbBanHangContext context, INotyfService notyfService)
         {
             _context = context;
+            _notyfService = notyfService;
+
         }
 
         // GET: Admin/SanPhams
         public async Task<IActionResult> Index(int page = 1, int MaLoai = 0)
         {
+            var pageNumber = page;
+            var pageSize = 10;
+
             List<SanPham> lsSanPham = new List<SanPham>();
-
-            //filter select
-            List<SelectListItem> lsQuantityStt = new List<SelectListItem>();
-            lsQuantityStt.Add(new SelectListItem() { Text = "Còn hàng", Value = "1" });
-            lsQuantityStt.Add(new SelectListItem() { Text = "Hết hàng", Value = "0" });
-            ViewData["lsQuantityStt"] = lsQuantityStt;
-
-            ViewData["LoaiSP"] = new SelectList(_context.LoaiSanPhams, "MaLoai", "TenLoai");
-            ViewData["ThuongHieu"] = new SelectList(_context.ThuongHieus, "MaTh", "TenTh");
 
             //filter op
             if(MaLoai != 0)
@@ -55,21 +53,27 @@ namespace WebBanHang.Areas.Admin.Controllers
                 .OrderByDescending(x => x.MaSp).ToList();
             }
 
-
             //page
-            var pageNumber = page;
-            var pageSize = 20;
             PagedList<SanPham> models = new PagedList<SanPham>(lsSanPham.AsQueryable(), pageNumber, pageSize);
 
             ViewBag.CurrentPage = pageNumber;
             ViewBag.CurrentMaLoai = MaLoai;
+
+            //filter select
+            List<SelectListItem> lsQuantityStt = new List<SelectListItem>();
+            lsQuantityStt.Add(new SelectListItem() { Text = "Còn hàng", Value = "1" });
+            lsQuantityStt.Add(new SelectListItem() { Text = "Hết hàng", Value = "0" });
+            ViewData["lsQuantityStt"] = lsQuantityStt;
+
+            ViewData["LoaiSP"] = new SelectList(_context.LoaiSanPhams, "MaLoai", "TenLoai", MaLoai);
+            ViewData["ThuongHieu"] = new SelectList(_context.ThuongHieus, "MaTh", "TenTh");
 
             return View(models);
         }
 
         //
         // Filter(int maLoai=0, int maTh=0, int stt=-1)
-        public IActionResult Filter(int MaLoai = 0)
+        public IActionResult Filter(int MaLoai = 0, int TH=0, int Stt=-1)
         {
             var url = $"/Admin/SanPhams?MaLoai={MaLoai}";
             if (MaLoai == 0)
@@ -124,13 +128,14 @@ namespace WebBanHang.Areas.Admin.Controllers
                 if(fAnh != null)
                 {
                     string extension = Path.GetExtension(fAnh.FileName);
-                    string img = Utilities.SEOUrl(sanPham.TenSp) + extension;
+                    string img = Utilities.SEOUrl(sanPham.TenSp)+"-"+ Utilities.RandomGuid() + extension;
                     sanPham.Anh = await Utilities.UploadFile(fAnh, @"sanpham", img.ToLower());
                 }
                 if (string.IsNullOrEmpty(sanPham.TenSp)) sanPham.Anh = "default.jpg";
 
                 _context.Add(sanPham);
                 await _context.SaveChangesAsync();
+                _notyfService.Success("Tạo mới thành công");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["LoaiSP"] = new SelectList(_context.LoaiSanPhams, "MaLoai", "TenLoai", sanPham.MaLoai);
@@ -183,6 +188,7 @@ namespace WebBanHang.Areas.Admin.Controllers
 
                     _context.Update(sanPham);
                     await _context.SaveChangesAsync();
+                    _notyfService.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -230,6 +236,7 @@ namespace WebBanHang.Areas.Admin.Controllers
             var sanPham = await _context.SanPhams.FindAsync(id);
             _context.SanPhams.Remove(sanPham);
             await _context.SaveChangesAsync();
+            _notyfService.Success("Xóa thành công");
             return RedirectToAction(nameof(Index));
         }
 
