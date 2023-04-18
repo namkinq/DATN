@@ -22,10 +22,17 @@ namespace WebBanHang.Controllers
         {
             return View();
         }
+        [Route("huong-dan-mua-hang")]
+        public IActionResult ShoppingGuide()
+        {
+            return View();
+        }
+        [Route("ve-chung-toi")]
         public IActionResult About()
         {
             return View();
         }
+        [Route("lien-he")]
         public IActionResult Contact()
         {
             return View();

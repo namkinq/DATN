@@ -12,6 +12,7 @@ namespace WebBanHang.Controllers
         {
             _context = context;
         }
+        [Route("sanpham")]
         public IActionResult Index()
         {
             return View();
