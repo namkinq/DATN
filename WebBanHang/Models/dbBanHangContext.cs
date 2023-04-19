@@ -79,6 +79,8 @@ namespace WebBanHang.Models
 
                 entity.Property(e => e.NgayShip).HasColumnType("datetime");
 
+                entity.Property(e => e.TrangThai).HasMaxLength(100);
+
                 entity.HasOne(d => d.MaKhNavigation)
                     .WithMany(p => p.DonHangs)
                     .HasForeignKey(d => d.MaKh)
@@ -105,6 +107,8 @@ namespace WebBanHang.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.MatKhau).HasMaxLength(50);
+
+                entity.Property(e => e.Salt).HasMaxLength(50);
 
                 entity.Property(e => e.Sdt)
                     .HasMaxLength(10)
@@ -176,6 +180,8 @@ namespace WebBanHang.Models
 
                 entity.Property(e => e.MatKhau).HasMaxLength(50);
 
+                entity.Property(e => e.Salt).HasMaxLength(50);
+
                 entity.Property(e => e.Sdt)
                     .HasMaxLength(10)
                     .IsUnicode(false)
@@ -233,6 +239,8 @@ namespace WebBanHang.Models
                 entity.Property(e => e.LoaiXe).HasMaxLength(50);
 
                 entity.Property(e => e.MatKhau).HasMaxLength(50);
+
+                entity.Property(e => e.Salt).HasMaxLength(50);
 
                 entity.Property(e => e.Sdt)
                     .HasMaxLength(10)

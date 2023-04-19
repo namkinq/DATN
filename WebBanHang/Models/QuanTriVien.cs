@@ -12,5 +12,6 @@ namespace WebBanHang.Models
         public string Email { get; set; }
         public string Sdt { get; set; }
         public string MatKhau { get; set; }
+        public string Salt { get; set; }
     }
 }

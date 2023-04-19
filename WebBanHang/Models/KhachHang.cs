@@ -19,6 +19,7 @@ namespace WebBanHang.Models
         public string MatKhau { get; set; }
         public string DiaChi { get; set; }
         public bool? Khoa { get; set; }
+        public string Salt { get; set; }
 
         public virtual ICollection<DonHang> DonHangs { get; set; }
     }

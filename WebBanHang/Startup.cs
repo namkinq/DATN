@@ -1,6 +1,8 @@
 using AspNetCoreHero.ToastNotification;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,10 +34,22 @@ namespace WebBanHang
             var stringConnectdb = Configuration.GetConnectionString("dbBanHang");
             services.AddDbContext<dbBanHangContext>(options => options.UseSqlServer(stringConnectdb));
             //unicode
-            services.AddSingleton<HtmlEncoder>(HtmlEncoder.Create(allowedRanges: new[] {UnicodeRanges.All}));
+            services.AddSingleton<HtmlEncoder>(HtmlEncoder.Create(allowedRanges: new[] { UnicodeRanges.All }));
+            //session
+            services.AddSession();
+            //services.AddSession(options =>
+            //{
+            //    options.IdleTimeout= TimeSpan.FromDays(2);
+            //});
 
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddNotyf(config => { config.DurationInSeconds = 3; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(p =>
+                {
+                    p.LoginPath = "/dangnhap";
+                    p.AccessDeniedPath = "/";
+                });
+             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+             services.AddNotyf(config => { config.DurationInSeconds = 3; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,8 +68,10 @@ namespace WebBanHang
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
+            app.UseSession();
 
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
