@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -6,22 +7,51 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanHang.Models;
+using WebBanHang.ModelViews;
 
 namespace WebBanHang.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly dbBanHangContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, dbBanHangContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View();
+            HomeViewVM model = new HomeViewVM();
+
+            var lsProducts = _context.SanPhams.AsNoTracking()
+                .OrderByDescending(x=>x.MaSp)
+                .ToList();
+
+            List<ProductHomeVM> lsProductViews = new List<ProductHomeVM>();
+
+            var lsCats = _context.LoaiSanPhams
+                .AsNoTracking()
+                .OrderBy(x => x.MaLoai)
+                .Take(5)
+                .ToList();
+
+            foreach( var item in lsCats)
+            {
+                ProductHomeVM productHome = new ProductHomeVM();
+                productHome.category = item;
+                productHome.lsProducts= lsProducts.Where(x=>x.MaLoai==item.MaLoai).Take(8).ToList();
+                lsProductViews.Add(productHome);
+            }
+
+            model.Products = lsProductViews;
+            ViewBag.AllProducts = lsProducts.Take(8).ToList();
+
+            return View(model);
         }
+
         [Route("huong-dan-mua-hang")]
         public IActionResult ShoppingGuide()
         {
