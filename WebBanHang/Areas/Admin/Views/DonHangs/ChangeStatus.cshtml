@@ -1,0 +1,79 @@
+﻿@model WebBanHang.Models.DonHang
+
+@{
+    ViewData["Title"] = "Thay đổi trạng thái đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <h2 class="header-title">Quản lý đơn hàng</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <a asp-area="Admin" asp-controller="DonHangs" asp-action="Index" class="breadcrumb-item">Đơn hàng</a>
+            <span class="breadcrumb-item active">Thay đổi trạng thái đơn hàng</span>
+        </nav>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Thay đổi trạng thái đơn hàng</h4>
+
+        <form asp-controller="DonHangs" asp-action="ChangeStatus" asp-route-id="@Model.MaDh" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MaDh" />
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">ID</label>
+                <div class="col-sm-2">
+                    <input type="text" disabled class="form-control" asp-for="MaDh">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Ngày đặt</label>
+                <div class="col-sm-3">
+                    <input type="text" disabled class="form-control" asp-for="NgayDat">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Tổng tiền</label>
+                <div class="col-sm-3">
+                    @{
+                        int? tong = 0;
+                        foreach (var item2 in Model.ChiTietDonHangs)
+                        {
+                            tong += item2.GiaGiam * item2.SoLuong;
+                        }
+                        <input type="text" disabled class="form-control" value="@tong" placeholder="Tên sản phẩm">
+                    }
+
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Trạng thái</label>
+                <div class="col-sm-3">
+                    <select class="custom-select" asp-items="ViewBag.lsTrangThai">
+                        <option value="" disabled selected>-Chọn trạng thái-</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Shipper</label>
+                <div class="col-sm-3">
+                    <select class="custom-select" asp-items="ViewBag.Shipper">
+                        <option value="" disabled selected>-Chọn shipper-</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-5">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

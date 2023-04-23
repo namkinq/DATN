@@ -67,11 +67,12 @@
                                 <ul class="quantity-with-btn pb-7">
                                     <li class="quantity">
                                         <div class="cart-plus-minus">
-                                            <input class="cart-plus-minus-box" value="1" type="text">
+                                            <input id="txtsoLuong" name="txtsoLuong" class="cart-plus-minus-box" value="1" type="text">
                                         </div>
                                     </li>
                                     <li class="add-to-cart">
-                                        <a class="btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0" href="cart.html">Thêm vào giỏ</a>
+                                        <a class="btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0" href="javascript:void(0)">Thêm vào giỏ</a>
+                                        <input hidden asp-for="MaSp"/>
                                     </li>
                                 </ul>
                                 <div class="product-category text-matterhorn pb-2">
@@ -332,4 +333,36 @@
     </div>
 </main>
 <!-- Main Content Area End Here  -->
+@section Scripts{
+    <script>
+        $(document).ready(function(){
+            $(function(){
+                function loadHeaderCart() {
+                    $("#miniCart").load("/AjaxContent/HeaderCart");
+                    $("#numberCart").load("/AjaxContent/NumberCart");
+                }
+                $(".add-to-cart").click(function(){
+                    var productid = $('#MaSp').val();
+                    var soLuong = $('#txtsoLuong').val();
 
+                    $.ajax({
+                        url: '/api/cart/add',
+                        datatype: "json",
+                        type: "POST",
+                        data:{
+                              productID: productid,
+                              amount: soLuong
+                        },
+                        success: function(response){
+                            loadHeaderCart();
+                            location.reload();
+                        },
+                        error: function(error){
+                            alert("Lỗi truyền data: "+ error.responseText);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

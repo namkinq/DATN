@@ -20,6 +20,8 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Ship\Data\" />
+    <Folder Include="Areas\Ship\Models\" />
     <Folder Include="wwwroot\images\banner\" />
     <Folder Include="wwwroot\images\sanpham\" />
   </ItemGroup>

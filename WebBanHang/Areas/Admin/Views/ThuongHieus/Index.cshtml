@@ -1,23 +1,23 @@
 ﻿@model IEnumerable<WebBanHang.Models.ThuongHieu>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý thương hiệu";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Quản lý thương hiệu</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Tạo mới</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.TenTh)
+               Tên Thương hiệu
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MoTa)
+                Mô tả
             </th>
             <th></th>
         </tr>
