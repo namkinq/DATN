@@ -30,7 +30,7 @@
                             <img height="50px" src="~/mainassets/images/logo/logo4.svg" alt="Yoko">
                         </a>
                         <div class="header-search-area d-none d-lg-block">
-                            <form action="#" class="header-searchbox">
+                            <form asp-controller="SanPham" asp-action="Index" method="get" class="header-searchbox">
                                 @*<select class="nice-select select-search-category wide">
                                 <option value="all">Tất cả danh mục</option>
                                 <option value="product-item">Product Item</option>
@@ -39,7 +39,7 @@
                                 <option value="product-item-4">Product Item 04</option>
                                 <option value="product-item-5">Product Item 05</option>
                                 </select>*@
-                                <input class="input-field" type="text" placeholder="Bạn cần tìm gì">
+                                <input class="input-field" name="searchKey" type="text" placeholder="Bạn cần tìm gì">
                                 <button class="btn btn-outline-whisper btn-primary-hover" type="submit"><i class="pe-7s-search"></i></button>
                             </form>
                         </div>

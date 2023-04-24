@@ -13,8 +13,9 @@ namespace WebBanHang.Controllers
         {
             _context = context;
         }
+
         [Route("sanpham")]
-        public IActionResult Index(int? page)
+        public IActionResult Index(int? page, string? searchKey, int? sort)
         {
             try
             {
@@ -26,6 +27,22 @@ namespace WebBanHang.Controllers
                     .Include(s => s.MaLoaiNavigation)
                     .Include(s => s.MaThNavigation)
                     .OrderByDescending(x => x.MaSp).ToList();
+
+                if (searchKey != null)
+                {
+                    lsSanPham = lsSanPham.Where(x=>x.TenSp.ToLower().Contains(searchKey.ToLower())).ToList();
+                }
+                if(sort!= null)
+                {
+                    if (sort == 1)
+                    {
+                        lsSanPham = lsSanPham.OrderBy(x => x.GiaGiam).ToList();
+                    }
+                    else if(sort==2)
+                    {
+                        lsSanPham = lsSanPham.OrderByDescending(x => x.GiaGiam).ToList();
+                    }
+                }
 
                 PagedList<SanPham> models = new PagedList<SanPham>(lsSanPham.AsQueryable(), pageNumber, pageSize);
                 ViewBag.CurrentPage = pageNumber;
@@ -45,6 +62,22 @@ namespace WebBanHang.Controllers
             }
             
         }
+
+        [Route("sanpham/sort")]
+        public IActionResult Sort(int sort)
+        {
+            var url = $"/sanpham?sort={sort}";
+            if (sort == 0)
+            {
+                url = $"/sanpham";
+            }
+            else
+            {
+                //if(maLoai==0) url = $"/Admin/SanPhams?maTh={maTh}&stt={stt}";
+            }
+            return Json(new { status = "success", RedirectUrl = url });
+        }
+
         [Route("sanphams/{MaLoai}")]
         public IActionResult List(int MaLoai, int page = 1)
         {

@@ -36,7 +36,7 @@
                                 </button>
                             </form>
                         </div>
-                        
+
                         @await Html.PartialAsync("_DMSPPartialView.cshtml", dmsp)
 
                         <div class="widgets-area mb-9">
@@ -45,7 +45,7 @@
                                 <div class="swiper-container widgets-list-slider">
                                     <div class="swiper-wrapper">
                                         <div class="swiper-slide">
-                                            @foreach(var item in Model)
+                                            @foreach (var item in Model)
                                             {
                                                 <div class="product-list-item">
                                                     <div class="product-img img-zoom-effect">
@@ -72,7 +72,7 @@
                                                 </div>
                                                 break;
                                             }
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -93,9 +93,9 @@
                                 </ul>
                             </li>
 
-                            <li class="short">
-                                <select class="nice-select wide rounded-0">
-                                    <option value="0">Sắp xếp</option>
+                            <li class="short col-lg-2">
+                                <select id="sort_pros" name="sort_pros" class="nice-select wide rounded-0">
+                                    <option selected value="0">Sắp xếp</option>
                                     <option value="1">Giá tăng dần</option>
                                     <option value="2">Giá giảm dần</option>
                                 </select>
@@ -117,11 +117,19 @@
                                                     </a>
                                                     <div class="product-add-action">
                                                         <ul>
-                                                            <li>
-                                                                <a href="cart.html">
+                                                            <li class="add-to-cart">
+                                                                <a href="javascript:void(0)">
                                                                     <i class="pe-7s-cart"></i>
                                                                 </a>
+                                                                <input hidden id="MaSp" name="MaSp" value="@item.MaSp" />
+
                                                             </li>
+                                                            <li class="quantity">
+                                                                <div>
+                                                                    <input hidden id="txtsoLuong" name="txtsoLuong" class="cart-plus-minus-box" value="1" type="text">
+                                                                </div>
+                                                            </li>
+                                                            
 
                                                         </ul>
                                                     </div>
@@ -129,7 +137,7 @@
                                                 <div class="product-content">
                                                     <a class="product-name" href="sanpham/@item.MaSp">@item.TenSp</a>
                                                     <div class="price-box pb-1">
-                                                        <span class="new-price text-danger">@item.GiaBan.Value.ToString("#,##0") đ</span>
+                                                        <span class="new-price text-danger">@item.GiaGiam.Value.ToString("#,##0") đ</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -138,7 +146,7 @@
                                 }
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="pagination-area pt-10">
                         <ul class="pagination justify-content-center">
@@ -151,3 +159,65 @@
     </div>
 </main>
 <!-- Main Content Area End Here -->
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //add cart
+            $(function () {
+                function loadHeaderCart() {
+                    $("#miniCart").load("/AjaxContent/HeaderCart");
+                    $("#numberCart").load("/AjaxContent/NumberCart");
+                }
+                $(".add-to-cart").click(function () {
+                    var productid = $(this).children('#MaSp').val();
+                    var soLuong = $('#txtsoLuong').val();
+
+                    $.ajax({
+                        url: '/api/cart/add',
+                        datatype: "json",
+                        type: "POST",
+                        data: {
+                            productID: productid,
+                            amount: soLuong
+                        },
+                        success: function (response) {
+                            loadHeaderCart();
+                            location.reload();
+                        },
+                        error: function (error) {
+                            alert("Lỗi!" + error.responseText);
+                        }
+                    });
+                });
+            });
+            
+            //sắp xếp
+            jQuery("#sort_pros").change(function () {
+                var sx = jQuery(this).children(":selected").attr("value");
+                sx = parseFloat(sx);
+
+                $('#sort_pros option')
+                    .removeAttr('selected');
+                $("#sort_pros > [value=" + sx + "]").attr("selected", "true");
+
+                $.ajax({
+                    url: 'sanpham/sort',
+                    datatype: "json",
+                    type: "GET",
+                    data: {
+                        sort: sx,
+                    },
+                    async: true,
+                    success: function (results) {
+                        if (results.status == "success") {
+                            window.location.href = results.redirectUrl;
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            });
+        });
+    </script>
+}

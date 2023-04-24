@@ -65,6 +65,7 @@ namespace WebBanHang.Areas.Admin.Controllers
             lsQuantityStt.Add(new SelectListItem() { Text = "Hết hàng", Value = "0" });
             ViewData["lsQuantityStt"] = lsQuantityStt;
 
+            //lấy slted value
             ViewData["LoaiSP"] = new SelectList(_context.LoaiSanPhams, "MaLoai", "TenLoai", MaLoai);
             ViewData["ThuongHieu"] = new SelectList(_context.ThuongHieus, "MaTh", "TenTh");
 
