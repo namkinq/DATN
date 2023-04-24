@@ -1,16 +1,29 @@
 ﻿@model WebBanHang.ModelViews.XemDonHang
-@{
-
-}
 @if (Model.ChiTietDonHang != null)
 {
-    
+    <h5 style="font-family:Verdana">Đơn hàng #@Model.DonHang.MaDh</h5>
+    <p>Trạng thái: @Model.DonHang.TrangThai</p>
+
+    @if (Model.DonHang.TrangThai =="Chờ xử lý"){
+        <form asp-controller="DonHang" asp-action="Huy" method="post">
+            <input hidden id="madh" name="madh" value="@Model.DonHang.MaDh" type="text">
+            <button class="btn btn-secondary btn-primary-hover" type="submit">Hủy đơn hàng</button>
+        </form>
+    }
+    @if (Model.DonHang.MaShipper != null)
+    {
+        <p>Shipper: @Model.DonHang.MaShipperNavigation.TenShipper</p>
+        <p>SĐT: @Model.DonHang.MaShipperNavigation.Sdt</p>
+        <p>Loại xe: @Model.DonHang.MaShipperNavigation.LoaiXe</p>
+        <p>Biển số: @Model.DonHang.MaShipperNavigation.BienSo</p>
+    }
+    <br />
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <tbody>
                 <tr>
                     <th>#</th>
-                    <th>SPP</th>
+                    <th>Sản phẩm</th>
                     <th>SL</th>
                     <th>Đơn giá</th>
                     <th>Thành tiền</th>
@@ -21,11 +34,10 @@
                         <td><a class="account-order-id" href="javascript:void(0)">#@item.MaSp</a></td>
                         <td>@item.MaSpNavigation.TenSp</td>
                         <td>@item.SoLuong</td>
-                        <td>@item.GiaGiam</td>
-                        <td>@item.SoLuong*@item.GiaGiam</td>
                         <td>
-                            <a href="javascript:void(0)" class="btn btn-secondary btn-primary-hover"><span>View</span></a>
-                        </td>
+                            <del>@item.GiaBan.Value.ToString("#,##0") đ</del>
+                            <br/>@item.GiaGiam.Value.ToString("#,##0") đ</td>
+                        <td style="font-weight:bold">@item.TongTien.Value.ToString("#,##0") đ</td>
                     </tr>
                 }
 

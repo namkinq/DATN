@@ -26,7 +26,7 @@ namespace WebBanHang.Areas.Admin.Controllers
         }
 
         // GET: Admin/DonHangs
-        public async Task<IActionResult> Index(int? page)
+        public IActionResult Index(int? page)
         {
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
             var pageSize = 10;

@@ -55,7 +55,7 @@
                         </div>
                         <div class="tab-pane fade" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
                             <div class="myaccount-orders">
-                                <h4 class="small-title">Đơn hàng</h4>
+                                <h5 style="font-family:Verdana">Danh sách đơn hàng</h5>
                                 @if (DanhSachDonHang != null && DanhSachDonHang.Count() > 0)
                                 {
                                     <div class="table-responsive">
@@ -64,21 +64,17 @@
                                                 <tr>
                                                     <th>Mã đơn hàng</th>
                                                     <th>Ngày đặt</th>
-                                                    <th>Ngày ship</th>
                                                     <th>Trạng thái</th>
                                                     <th>Tổng tiền</th>
                                                     <th></th>
                                                 </tr>
                                                 @foreach (var item in DanhSachDonHang)
                                                 {
-                                                    int? @tong = 0;
                                                     <tr>
                                                         <td><a class="account-order-id" href="javascript:void(0)">#@item.MaDh</a></td>
                                                         <td>@item.NgayDat</td>
-                                                        <td>@item.NgayShip</td>
                                                         <td>@item.TrangThai</td>
-                                                        @foreach (var item2 in item.ChiTietDonHangs) { tong += item2.GiaGiam * item2.SoLuong; }
-                                                        <td>@tong</td>
+                                                        <td>@item.TongTien.Value.ToString("#,##0") đ</td>
                                                         <td>
                                                             <a href="javascript:void(0)" data-madonhang="@item.MaDh" class="xemdonhang btn btn-secondary btn-primary-hover"><span>View</span></a>
                                                         </td>

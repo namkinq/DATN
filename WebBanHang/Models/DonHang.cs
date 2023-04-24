@@ -18,6 +18,7 @@ namespace WebBanHang.Models
         public int? TienShip { get; set; }
         public int? GiamGiaShip { get; set; }
         public int? GiamGia { get; set; }
+        public int? TongTien { get; set; }
         public string DiaChi { get; set; }
         public string TrangThai { get; set; }
         public int? MaKh { get; set; }

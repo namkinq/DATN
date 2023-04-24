@@ -61,9 +61,9 @@ namespace WebBanHang.Controllers
 
                 XemDonHang donHang = new XemDonHang();
                 donHang.DonHang = donhang;
-                donhang.ChiTietDonHangs = ctdh;
+                donHang.ChiTietDonHang = ctdh;
 
-                return PartialView("Details",donHang);
+                return PartialView("Details", donHang);
             }
             catch
             {

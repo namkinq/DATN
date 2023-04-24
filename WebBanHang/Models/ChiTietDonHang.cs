@@ -12,6 +12,7 @@ namespace WebBanHang.Models
         public int? GiaBan { get; set; }
         public int? GiaGiam { get; set; }
         public int? SoLuong { get; set; }
+        public int? TongTien { get; set; }
 
         public virtual DonHang MaDhNavigation { get; set; }
         public virtual SanPham MaSpNavigation { get; set; }
