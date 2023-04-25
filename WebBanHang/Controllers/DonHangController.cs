@@ -71,5 +71,54 @@ namespace WebBanHang.Controllers
             }
             
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Huy(int? madh)
+        {
+            if (madh == null)
+            {
+                return RedirectToAction("Dashboard", "Accounts");
+            }
+            try
+            {
+                var taikhoanID = HttpContext.Session.GetString("CustomerId");
+                if (string.IsNullOrEmpty(taikhoanID))
+                {
+                    return RedirectToAction("Login", "Accounts");
+                }
+                var khachhang = _context.KhachHangs.AsNoTracking()
+                    .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
+                if (khachhang == null)
+                {
+                    return NotFound();
+                }
+
+                var donhang = await _context.DonHangs
+                    .FirstOrDefaultAsync(m => m.MaDh == madh && Convert.ToInt32(taikhoanID) == m.MaKh);
+                if (donhang == null)
+                {
+                    return RedirectToAction("Dashboard", "Accounts");
+                }
+                if (donhang.TrangThai != "Chờ xử lý")
+                {
+                    _notyfService.Warning("Hủy thất bại");
+                    return RedirectToAction("Dashboard", "Accounts");
+                }
+                donhang.TrangThai = "Đã hủy";
+
+                _context.Update(donhang);
+                _context.SaveChanges();
+
+                _notyfService.Success("Hủy thành công");
+
+                return RedirectToAction("Dashboard", "Accounts");
+
+            }
+            catch
+            {
+                return RedirectToAction("Dashboard", "Accounts");
+            }
+
+        }
     }
 }

@@ -237,7 +237,7 @@ namespace WebBanHang.Controllers
         {
             try
             {
-                var taikhoanID = HttpContext.Session.GetString("CustomerID");
+                var taikhoanID = HttpContext.Session.GetString("CustomerId");
                 if(taikhoanID == null)
                 {
                     return RedirectToAction("DangNhap", "Accounts");
@@ -251,14 +251,21 @@ namespace WebBanHang.Controllers
                     var pass = (model.PasswordNow.Trim() + taikhoan.Salt.Trim()).ToMD5();
                     if (pass == taikhoan.MatKhau)
                     {
-                        string passnew = (model.Password.Trim() + taikhoan.Salt.Trim()).ToMD5();
-                        taikhoan.MatKhau = passnew;
+                        if(model.Password != null)
+                        {
+                            string passnew = (model.Password.Trim() + taikhoan.Salt.Trim()).ToMD5();
+                            taikhoan.MatKhau = passnew;
+                        }
+
+                        taikhoan.TenKh = model.FullName;
+                        taikhoan.Sdt = model.Phone;
+                        taikhoan.DiaChi = model.Address;
 
                         _context.Update(taikhoan);
                         _context.SaveChanges();
                         _notyfService.Success("Cập nhật thành công");
 
-                        return RedirectToAction("Dashboard", "Account");
+                        return RedirectToAction("Dashboard", "Accounts");
                     }
                 }
                 

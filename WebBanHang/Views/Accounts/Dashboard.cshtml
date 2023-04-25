@@ -8,7 +8,8 @@
             {
                 FullName = Model.TenKh,
                 Phone = Model.Sdt,
-                Address = Model.DiaChi
+                Address = Model.DiaChi,
+                Email = Model.Email
             };
 }
 
@@ -31,10 +32,10 @@
                 <div class="col-lg-3">
                     <ul class="nav myaccount-tab-trigger" id="account-page-tab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="account-dashboard-tab" data-bs-toggle="tab" href="#account-dashboard" role="tab" aria-controls="account-dashboard" aria-selected="true">Dashboard</a>
+                            <a class="nav-link " id="account-dashboard-tab" data-bs-toggle="tab" href="#account-dashboard" role="tab" aria-controls="account-dashboard" aria-selected="false">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="account-orders-tab" data-bs-toggle="tab" href="#account-orders" role="tab" aria-controls="account-orders" aria-selected="false">Đơn hàng</a>
+                            <a class="nav-link active" id="account-orders-tab" data-bs-toggle="tab" href="#account-orders" role="tab" aria-controls="account-orders" aria-selected="true">Đơn hàng</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="account-details-tab" data-bs-toggle="tab" href="#account-details" role="tab" aria-controls="account-details" aria-selected="false">Thông tin tài khoản</a>
@@ -46,14 +47,14 @@
                 </div>
                 <div class="col-lg-9">
                     <div class="tab-content myaccount-tab-content" id="account-page-tab-content">
-                        <div class="tab-pane fade show active" id="account-dashboard" role="tabpanel" aria-labelledby="account-dashboard-tab">
+                        <div class="tab-pane fade" id="account-dashboard" role="tabpanel" aria-labelledby="account-dashboard-tab">
                             <div class="myaccount-dashboard">
                                 <p>
                                     Xin chào, <b>@Model.TenKh</b>
                                 </p>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
+                        <div class="tab-pane fade show active" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
                             <div class="myaccount-orders">
                                 <h5 style="font-family:Verdana">Danh sách đơn hàng</h5>
                                 @if (DanhSachDonHang != null && DanhSachDonHang.Count() > 0)
