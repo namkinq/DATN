@@ -18,6 +18,11 @@
                 <label>Email</label>
                 <input disabled asp-for="Email" type="email">
             </div>
+            <div class="single-input ">
+                <label>Địa chỉ</label>
+                <input asp-for="Address" type="text">
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
             <div class="single-input">
                 <label>
                     Mật khẩu hiện tại
@@ -37,11 +42,7 @@
                 <input asp-for="ConfirmPassword" type="password">
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <div class="single-input ">
-                <label>Địa chỉ</label>
-                <input asp-for="Address" type="text">
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
+            
             <div class="single-input">
                 <button class="btn btn-custom-size lg-size btn-secondary btn-primary-hover rounded-0" type="submit">
                     <span>Lưu</span>

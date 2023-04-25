@@ -10,6 +10,13 @@
             <button class="btn btn-secondary btn-primary-hover" type="submit">Hủy đơn hàng</button>
         </form>
     }
+    @if (Model.DonHang.TrangThai == "Giao thành công")
+    {
+        <form asp-controller="DonHang" asp-action="DanhGia" method="post">
+            <input hidden id="id" name="id" value="@Model.DonHang.MaDh" type="text">
+            <button class="btn btn-secondary btn-primary-hover" type="submit">Đánh giá sản phẩm</button>
+        </form>
+    }
     @if (Model.DonHang.MaShipper != null)
     {
         <p>Shipper: @Model.DonHang.MaShipperNavigation.TenShipper</p>
@@ -17,6 +24,7 @@
         <p>Loại xe: @Model.DonHang.MaShipperNavigation.LoaiXe</p>
         <p>Biển số: @Model.DonHang.MaShipperNavigation.BienSo</p>
     }
+    
     <br />
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
@@ -32,7 +40,8 @@
                 {
                     <tr>
                         <td><a class="account-order-id" href="javascript:void(0)">#@item.MaSp</a></td>
-                        <td>@item.MaSpNavigation.TenSp</td>
+                        <td>@item.MaSpNavigation.TenSp
+                        </td>
                         <td>@item.SoLuong</td>
                         <td>
                             <del>@item.GiaBan.Value.ToString("#,##0") đ</del>

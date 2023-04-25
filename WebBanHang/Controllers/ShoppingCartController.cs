@@ -42,7 +42,16 @@ namespace WebBanHang.Controllers
                 CartItem item = cart.SingleOrDefault(p => p.product.MaSp == productID);
                 if (item != null)
                 {
-                    item.amount = item.amount + amount.Value;
+                    SanPham hh = _context.SanPhams.SingleOrDefault(p => p.MaSp == productID);
+                    if (amount.Value + item.amount >= hh.SoLuongCo)
+                    {
+                        item.amount = hh.SoLuongCo;
+                    }
+                    else
+                    {
+                        item.amount = item.amount + amount.Value;
+                    }
+
                     //
                     HttpContext.Session.Set<List<CartItem>>("GioHang", cart);
                 }
@@ -79,9 +88,19 @@ namespace WebBanHang.Controllers
                 if (cart != null)
                 {
                     CartItem item = cart.SingleOrDefault(p => p.product.MaSp == productID);
-                    if (item!=null && amount.HasValue)//đã có - cập nhâp sl
+                    //
+                    SanPham hh = _context.SanPhams.SingleOrDefault(p => p.MaSp == productID);
+                    //
+                    if (item!=null && amount.HasValue)
                     {
-                        item.amount = amount.Value;
+                        if (amount.Value >= hh.SoLuongCo)
+                        {
+                            item.amount = hh.SoLuongCo;
+                        }
+                        else
+                        {
+                            item.amount = amount.Value;
+                        }
                     }
                 }
                 //luu sesion
