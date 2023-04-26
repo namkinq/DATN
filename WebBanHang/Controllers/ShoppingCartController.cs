@@ -45,7 +45,7 @@ namespace WebBanHang.Controllers
                     SanPham hh = _context.SanPhams.SingleOrDefault(p => p.MaSp == productID);
                     if (amount.Value + item.amount >= hh.SoLuongCo)
                     {
-                        item.amount = hh.SoLuongCo;
+                        item.amount = (int)hh.SoLuongCo;
                     }
                     else
                     {
@@ -95,7 +95,7 @@ namespace WebBanHang.Controllers
                     {
                         if (amount.Value >= hh.SoLuongCo)
                         {
-                            item.amount = hh.SoLuongCo;
+                            item.amount = (int)hh.SoLuongCo;
                         }
                         else
                         {

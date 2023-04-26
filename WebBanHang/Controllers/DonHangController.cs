@@ -121,51 +121,51 @@ namespace WebBanHang.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DanhGia(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            try
-            {
-                var taikhoanID = HttpContext.Session.GetString("CustomerId");
-                if (string.IsNullOrEmpty(taikhoanID))
-                {
-                    return RedirectToAction("Login", "Accounts");
-                }
-                var khachhang = _context.KhachHangs.AsNoTracking()
-                    .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
-                if (khachhang == null)
-                {
-                    return NotFound();
-                }
-                var donhang = await _context.DonHangs
-                    .FirstOrDefaultAsync(m => m.MaDh == id && Convert.ToInt32(taikhoanID) == m.MaKh);
-                if (donhang == null)
-                {
-                    return NotFound();
-                }
+        //[HttpPost]
+        //public async Task<IActionResult> DanhGia(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    try
+        //    {
+        //        var taikhoanID = HttpContext.Session.GetString("CustomerId");
+        //        if (string.IsNullOrEmpty(taikhoanID))
+        //        {
+        //            return RedirectToAction("Login", "Accounts");
+        //        }
+        //        var khachhang = _context.KhachHangs.AsNoTracking()
+        //            .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
+        //        if (khachhang == null)
+        //        {
+        //            return NotFound();
+        //        }
+        //        var donhang = await _context.DonHangs
+        //            .FirstOrDefaultAsync(m => m.MaDh == id && Convert.ToInt32(taikhoanID) == m.MaKh);
+        //        if (donhang == null)
+        //        {
+        //            return NotFound();
+        //        }
 
-                var ctdh = _context.ChiTietDonHangs
-                    .AsNoTracking()
-                    .Where(x => x.MaDh == id)
-                    .Include(x => x.MaSpNavigation)
-                    .OrderBy(x => x.MaSp)
-                    .ToList();
+        //        var ctdh = _context.ChiTietDonHangs
+        //            .AsNoTracking()
+        //            .Where(x => x.MaDh == id)
+        //            .Include(x => x.MaSpNavigation)
+        //            .OrderBy(x => x.MaSp)
+        //            .ToList();
 
-                XemDonHang donHang = new XemDonHang();
-                donHang.DonHang = donhang;
-                donHang.ChiTietDonHang = ctdh;
+        //        XemDonHang donHang = new XemDonHang();
+        //        donHang.DonHang = donhang;
+        //        donHang.ChiTietDonHang = ctdh;
 
-                return PartialView("Details", donHang);
-            }
-            catch
-            {
-                return NotFound();
-            }
+        //        return PartialView("Details", donHang);
+        //    }
+        //    catch
+        //    {
+        //        return NotFound();
+        //    }
 
-        }
+        //}
     }
 }

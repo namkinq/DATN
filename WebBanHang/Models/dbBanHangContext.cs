@@ -73,11 +73,19 @@ namespace WebBanHang.Models
 
                 entity.Property(e => e.DiaChi).HasMaxLength(500);
 
+                entity.Property(e => e.HoTen).HasMaxLength(250);
+
                 entity.Property(e => e.MaKh).HasColumnName("MaKH");
 
                 entity.Property(e => e.NgayDat).HasColumnType("datetime");
 
                 entity.Property(e => e.NgayShip).HasColumnType("datetime");
+
+                entity.Property(e => e.Sdt)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("SDT")
+                    .IsFixedLength(true);
 
                 entity.Property(e => e.TrangThai).HasMaxLength(100);
 

@@ -258,7 +258,6 @@ namespace WebBanHang.Controllers
                         }
 
                         taikhoan.TenKh = model.FullName;
-                        taikhoan.Sdt = model.Phone;
                         taikhoan.DiaChi = model.Address;
 
                         _context.Update(taikhoan);
