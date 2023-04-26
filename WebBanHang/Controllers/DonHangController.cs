@@ -37,7 +37,7 @@ namespace WebBanHang.Controllers
                 var taikhoanID = HttpContext.Session.GetString("CustomerId");
                 if (string.IsNullOrEmpty(taikhoanID))
                 {
-                    return RedirectToAction("Login", "Accounts");
+                    return RedirectToAction("DangNhap", "Accounts");
                 }
                 var khachhang = _context.KhachHangs.AsNoTracking()
                     .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
@@ -46,6 +46,7 @@ namespace WebBanHang.Controllers
                     return NotFound();
                 }
                 var donhang = await _context.DonHangs
+                    .Include(x=>x.MaTtNavigation)
                     .FirstOrDefaultAsync(m => m.MaDh == id && Convert.ToInt32(taikhoanID) == m.MaKh);
                 if(donhang == null)
                 {
@@ -84,7 +85,7 @@ namespace WebBanHang.Controllers
                 var taikhoanID = HttpContext.Session.GetString("CustomerId");
                 if (string.IsNullOrEmpty(taikhoanID))
                 {
-                    return RedirectToAction("Login", "Accounts");
+                    return RedirectToAction("DangNhap", "Accounts");
                 }
                 var khachhang = _context.KhachHangs.AsNoTracking()
                     .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
@@ -99,12 +100,12 @@ namespace WebBanHang.Controllers
                 {
                     return RedirectToAction("Dashboard", "Accounts");
                 }
-                if (donhang.TrangThai != "Chờ xử lý")
+                if (donhang.MaTt != 1)
                 {
                     _notyfService.Warning("Hủy thất bại");
                     return RedirectToAction("Dashboard", "Accounts");
                 }
-                donhang.TrangThai = "Đã hủy";
+                donhang.MaTt = 6;
 
                 _context.Update(donhang);
                 _context.SaveChanges();

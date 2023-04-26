@@ -6,6 +6,6 @@ namespace WebBanHang.ModelViews
     {
         public SanPham product { get; set; }
         public int amount { get; set; }
-        public double TotalMoney => amount * product.GiaGiam.Value;
+        public int TotalMoney => amount * product.GiaGiam.Value;
     }
 }

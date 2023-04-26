@@ -76,16 +76,16 @@
 @if (Model.ChiTietDonHang != null)
 {
     <h5 style="font-family:Verdana">Đơn hàng #@Model.DonHang.MaDh</h5>
-    <p>Trạng thái: @Model.DonHang.TrangThai</p>
+    <p>Trạng thái: @Model.DonHang.MaTtNavigation.TenTt</p>
 
-    @if (Model.DonHang.TrangThai == "Chờ xử lý")
+    @if (Model.DonHang.MaTt == 1)
     {
         <form asp-controller="DonHang" asp-action="Huy" method="post">
             <input hidden id="madh" name="madh" value="@Model.DonHang.MaDh" type="text">
             <button class="btn btn-secondary btn-primary-hover" type="submit">Hủy đơn hàng</button>
         </form>
     }
-    @if (Model.DonHang.TrangThai == "Giao thành công")
+    @if (Model.DonHang.MaTt == 4)
     {
         <form asp-controller="DonHang" asp-action="DanhGia" method="post">
             <input hidden id="id" name="id" value="@Model.DonHang.MaDh" type="text">
@@ -117,7 +117,7 @@
                         <td><a class="account-order-id" href="javascript:void(0)">#@item.MaSp</a></td>
                         <td>
                             @item.MaSpNavigation.TenSp
-                            @if(Model.DonHang.TrangThai != "Giao thành công")
+                            @if(Model.DonHang.MaTt != 4)
                             {
                                 <br />
                                 <button style="height:25px; font-size:12px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="mdo">Đánh giá</button>

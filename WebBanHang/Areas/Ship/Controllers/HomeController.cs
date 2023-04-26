@@ -30,6 +30,7 @@ namespace WebBanHang.Areas.Ship.Controllers
                 .Include(d => d.MaKhNavigation)
                 .Include(d => d.MaShipperNavigation)
                 .Include(s => s.ChiTietDonHangs)
+                .Include(x=>x.MaTtNavigation)
                 .AsNoTracking()
                 .OrderByDescending(x => x.NgayDat);
 

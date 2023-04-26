@@ -1,6 +1,8 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -38,9 +40,14 @@ namespace WebBanHang.Controllers
         [Route("checkout")]
         public IActionResult Index(string returnUrl = null)
         {
+
             //lấy giỏ
             var cart = HttpContext.Session.Get<List<CartItem>>("GioHang");
             var taikhoanID = HttpContext.Session.GetString("CustomerId");
+            if (string.IsNullOrEmpty(taikhoanID))
+            {
+                return RedirectToAction("DangNhap", "Accounts");
+            }
             MuaHangVM model = new MuaHangVM();
 
             if (taikhoanID != null)
@@ -51,8 +58,39 @@ namespace WebBanHang.Controllers
                 model.FullName = khachhang.TenKh;
                 model.Email = khachhang.Email;
                 model.Phone = khachhang.Sdt;
-                model.Address = khachhang.DiaChi;
+
+                if (khachhang.DiaChi != null)
+                {
+                    model.Address = khachhang.DiaChi;
+                }
+                //tp-qh-xp
+                if (khachhang.Matp != null)
+                {
+                    ViewData["lsTinhThanh"] = new SelectList(_context.TinhThanhPhos.OrderBy(x => x.Matp).ToList(), "Matp", "Name", khachhang.Matp);
+                    if (khachhang.Maqh != null)
+                    {
+                        ViewData["lsQuanHuyen"] = new SelectList(_context.QuanHuyens.Where(x => x.Matp == khachhang.Matp).OrderBy(x => x.Maqh).ToList(), "Maqh", "Name", khachhang.Maqh);
+                        if (khachhang.Maxa != null)
+                        {
+                            ViewData["lsPhuongXa"] = new SelectList(_context.XaPhuongThiTrans.Where(x => x.Maqh == khachhang.Maqh).OrderBy(x => x.Maxa).ToList(), "Maxa", "Name", khachhang.Maxa);
+                        }
+                        else
+                        {
+                            ViewData["lsPhuongXa"] = new SelectList(_context.XaPhuongThiTrans.Where(x => x.Maqh == khachhang.Maqh).OrderBy(x => x.Maxa).ToList(), "Maxa", "Name");
+                        }
+                    }
+                    else
+                    {
+                        ViewData["lsQuanHuyen"] = new SelectList(_context.QuanHuyens.Where(x=>x.Matp==khachhang.Matp).OrderBy(x => x.Maqh).ToList(), "Maqh", "Name");
+                    }
+                }
+                else
+                {
+                    ViewData["lsTinhThanh"] = new SelectList(_context.TinhThanhPhos.OrderBy(x => x.Matp).ToList(), "Matp", "Name");
+                } 
             }
+
+
             ViewBag.GioHang = cart;
             return View(model);
         }
@@ -75,8 +113,13 @@ namespace WebBanHang.Controllers
                 model.Email = khachhang.Email;
                 model.Phone = khachhang.Sdt;
                 model.Address = khachhang.DiaChi;
+                //model.TinhThanh = khachhang.Matp;
 
-                khachhang.DiaChi = muahang.Address;
+                if (khachhang.DiaChi == null) khachhang.DiaChi = muahang.Address;
+                if (khachhang.Matp == null) khachhang.Matp = muahang.TinhThanh;
+                if (khachhang.Maqh == null) khachhang.Maqh = muahang.QuanHuyen;
+                if (khachhang.Maxa == null) khachhang.Maxa = muahang.PhuongXa;
+
 
                 _context.Update(khachhang);
                 _context.SaveChanges();
@@ -91,9 +134,14 @@ namespace WebBanHang.Controllers
 
                     donhang.MaKh = model.CustomerId;
                     donhang.DiaChi = model.Address;
+                    donhang.Matp = model.TinhThanh;
+                    donhang.Maqh = model.QuanHuyen;
+                    donhang.Maxa = model.PhuongXa;
 
                     donhang.NgayDat = DateTime.Now;
-                    donhang.TrangThai = "Chờ xử lý";
+                    donhang.MaTt = 1;
+
+                    donhang.TongTien = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
 
                     _context.Add(donhang);
                     _context.SaveChanges();
@@ -107,10 +155,18 @@ namespace WebBanHang.Controllers
                         ctdh.GiaBan = item.product.GiaBan;
                         ctdh.GiaGiam = item.product.GiaGiam;
                         ctdh.SoLuong = item.amount;
+                        ctdh.TongTien = item.TotalMoney;
+                        //
+                        SanPham hh = _context.SanPhams.SingleOrDefault(p => p.MaSp == item.product.MaSp);
+                        hh.SoLuongCo -= 1;
 
                         _context.Add(ctdh);
+                        _context.Update(hh);
                     }
+
                     _context.SaveChanges();
+
+                    //
 
                     //clear
                     HttpContext.Session.Remove("GioHang");
@@ -121,6 +177,7 @@ namespace WebBanHang.Controllers
             }
             catch
             {
+
                 ViewBag.GioHang = cart;
                 return View(model);
             }

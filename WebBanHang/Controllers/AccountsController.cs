@@ -79,6 +79,7 @@ namespace WebBanHang.Controllers
                 {
                     var lsDonHang = _context.DonHangs
                         .Include(x => x.ChiTietDonHangs)
+                        .Include(x=>x.MaTtNavigation)
                         .AsNoTracking()
                         .Where(x => x.MaKh == khachhang.MaKh)
                         .OrderByDescending(x => x.NgayDat).ToList();

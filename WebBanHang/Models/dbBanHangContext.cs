@@ -22,10 +22,14 @@ namespace WebBanHang.Models
         public virtual DbSet<KhachHang> KhachHangs { get; set; }
         public virtual DbSet<KhuyenMai> KhuyenMais { get; set; }
         public virtual DbSet<LoaiSanPham> LoaiSanPhams { get; set; }
+        public virtual DbSet<QuanHuyen> QuanHuyens { get; set; }
         public virtual DbSet<QuanTriVien> QuanTriViens { get; set; }
         public virtual DbSet<SanPham> SanPhams { get; set; }
         public virtual DbSet<Shipper> Shippers { get; set; }
         public virtual DbSet<ThuongHieu> ThuongHieus { get; set; }
+        public virtual DbSet<TinhThanhPho> TinhThanhPhos { get; set; }
+        public virtual DbSet<TrangThaiDonHang> TrangThaiDonHangs { get; set; }
+        public virtual DbSet<XaPhuongThiTran> XaPhuongThiTrans { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -77,6 +81,20 @@ namespace WebBanHang.Models
 
                 entity.Property(e => e.MaKh).HasColumnName("MaKH");
 
+                entity.Property(e => e.MaTt).HasColumnName("MaTT");
+
+                entity.Property(e => e.Maqh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Matp)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Maxa)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.NgayDat).HasColumnType("datetime");
 
                 entity.Property(e => e.NgayShip).HasColumnType("datetime");
@@ -87,8 +105,6 @@ namespace WebBanHang.Models
                     .HasColumnName("SDT")
                     .IsFixedLength(true);
 
-                entity.Property(e => e.TrangThai).HasMaxLength(100);
-
                 entity.HasOne(d => d.MaKhNavigation)
                     .WithMany(p => p.DonHangs)
                     .HasForeignKey(d => d.MaKh)
@@ -98,6 +114,11 @@ namespace WebBanHang.Models
                     .WithMany(p => p.DonHangs)
                     .HasForeignKey(d => d.MaShipper)
                     .HasConstraintName("FK_DonHang_Shipper");
+
+                entity.HasOne(d => d.MaTtNavigation)
+                    .WithMany(p => p.DonHangs)
+                    .HasForeignKey(d => d.MaTt)
+                    .HasConstraintName("FK_DonHang_TrangThaiDonHang");
             });
 
             modelBuilder.Entity<KhachHang>(entity =>
@@ -114,7 +135,19 @@ namespace WebBanHang.Models
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Maqh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.MatKhau).HasMaxLength(50);
+
+                entity.Property(e => e.Matp)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Maxa)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Salt).HasMaxLength(50);
 
@@ -170,6 +203,37 @@ namespace WebBanHang.Models
                 entity.Property(e => e.MoTa).HasMaxLength(250);
 
                 entity.Property(e => e.TenLoai).HasMaxLength(250);
+            });
+
+            modelBuilder.Entity<QuanHuyen>(entity =>
+            {
+                entity.HasKey(e => e.Maqh)
+                    .HasName("PK__QuanHuye__2724F3DEBB717CB8");
+
+                entity.ToTable("QuanHuyen");
+
+                entity.Property(e => e.Maqh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Matp)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasMaxLength(30);
+
+                entity.HasOne(d => d.MatpNavigation)
+                    .WithMany(p => p.QuanHuyens)
+                    .HasForeignKey(d => d.Matp)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_QuanHuyen_TinhThanhPho");
             });
 
             modelBuilder.Entity<QuanTriVien>(entity =>
@@ -272,6 +336,78 @@ namespace WebBanHang.Models
                 entity.Property(e => e.TenTh)
                     .HasMaxLength(250)
                     .HasColumnName("TenTH");
+            });
+
+            modelBuilder.Entity<TinhThanhPho>(entity =>
+            {
+                entity.HasKey(e => e.Matp)
+                    .HasName("PK__TinhThan__2724FBC5B42250B7");
+
+                entity.ToTable("TinhThanhPho");
+
+                entity.Property(e => e.Matp)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Slug)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasMaxLength(30);
+            });
+
+            modelBuilder.Entity<TrangThaiDonHang>(entity =>
+            {
+                entity.HasKey(e => e.MaTt);
+
+                entity.ToTable("TrangThaiDonHang");
+
+                entity.Property(e => e.MaTt)
+                    .ValueGeneratedNever()
+                    .HasColumnName("MaTT");
+
+                entity.Property(e => e.MoTa).HasMaxLength(250);
+
+                entity.Property(e => e.TenTt)
+                    .HasMaxLength(100)
+                    .HasColumnName("TenTT");
+            });
+
+            modelBuilder.Entity<XaPhuongThiTran>(entity =>
+            {
+                entity.HasKey(e => e.Maxa)
+                    .HasName("PK__XaPhuong__B9169A76FDCF96AF");
+
+                entity.ToTable("XaPhuongThiTran");
+
+                entity.Property(e => e.Maxa)
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Maqh)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasMaxLength(30);
+
+                entity.HasOne(d => d.MaqhNavigation)
+                    .WithMany(p => p.XaPhuongThiTrans)
+                    .HasForeignKey(d => d.Maqh)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_XaPhuongThiTran_QuanHuyen");
             });
 
             OnModelCreatingPartial(modelBuilder);
