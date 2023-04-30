@@ -320,6 +320,10 @@ namespace WebBanHang.Models
                     .HasColumnName("SDT")
                     .IsFixedLength(true);
 
+                entity.Property(e => e.TenHt)
+                    .HasMaxLength(500)
+                    .HasColumnName("TenHT");
+
                 entity.Property(e => e.TenShipper).HasMaxLength(250);
             });
 

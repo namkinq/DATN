@@ -1,17 +1,17 @@
 ﻿@model WebBanHang.Models.DonHang
 
 @{
-    ViewData["Title"] = "Thay đổi trạng thái đơn hàng";
-    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "ChangeStatus";
+    Layout = "~/Areas/Ship/Views/Shared/_ShipperLayout.cshtml";
     List<ChiTietDonHang> ctDH = ViewBag.ChiTiet;
 }
 
 <div class="page-header">
-    <h2 class="header-title">Quản lý đơn hàng</h2>
+    <h2 class="header-title">Quản lý giao hàng</h2>
     <div class="header-sub-title">
         <nav class="breadcrumb breadcrumb-dash">
-            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
-            <a asp-area="Admin" asp-controller="DonHangs" asp-action="Index" class="breadcrumb-item">Đơn hàng</a>
+            <a asp-area="Ship" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <a asp-area="Ship" asp-controller="Home" asp-action="Index" class="breadcrumb-item">Đơn hàng</a>
             <span class="breadcrumb-item active">Thay đổi trạng thái đơn hàng</span>
         </nav>
     </div>
@@ -24,7 +24,7 @@
             <div class="row m-t-20 lh-2">
                 <div class="col-sm-6">
                     <div class="card">
-                        <div class="card-body" style="height:270px">
+                        <div class="card-body" style="height:250px">
                             <h4 class="p-l-10 m-t-10">Thông tin đơn hàng:</h4>
                             <address class="p-l-10 m-t-10">
                                 <span class="font-weight-semibold text-dark">MÃ ĐƠN HÀNG: #@Model.MaDh</span><br>
@@ -38,54 +38,52 @@
                 </div>
                 <div class="col-sm-6 ">
                     <div class="card">
-                        <div class="card-body" style="height:270px">
+                        <div class="card-body" style="height:250px">
                             <h4 class="p-l-10 m-t-10">Thông tin vận chuyển:</h4>
                             <address class="p-l-10 m-t-10">
-                                <form asp-controller="DonHangs" asp-action="ChangeStatus" asp-route-id="@Model.MaDh" method="post">
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                    <input type="hidden" asp-for="MaDh" />
-
+                                <span class="font-weight-semibold text-dark">Trạng thái đơn hàng: @Model.MaTtNavigation.TenTt</span><br>
+                                <span class="font-weight-semibold text-dark">Shipper: @Model.MaShipperNavigation.TenHt</span><br>
+                                <br />
+                                @if (Model.MaTt == 3)
+                                {
                                     <div class="form-group row">
-                                        <label class="col-sm-5 col-form-label">Trạng thái đơn hàng</label>
-                                        <div class="col-sm-7">
-                                            <select class="custom-select" asp-for="MaTt" asp-items="ViewBag.lsTrangThai">
-                                                <option value="0" disabled selected>-Chọn trạng thái-</option>
-                                            </select>
+                                        <div class="col-sm-5 ">
+                                            <form asp-controller="Home" asp-action="ChangeStatus" asp-route-id="@Model.MaDh" method="post">
+                                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                <input type="hidden" asp-for="MaDh" />
+                                                <input type="hidden" name="KQ" value="TC" />
+                                                <div class="form-group row">
+                                                    <div class="col-sm-12">
+                                                        <button type="submit" class="btn btn-success">Giao thành công</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <form asp-controller="Home" asp-action="ChangeStatus" asp-route-id="@Model.MaDh" method="post">
+                                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                <input type="hidden" asp-for="MaDh" />
+                                                <input type="hidden" name="KQ" value="TB" />
+                                                <div class="form-group row">
+                                                    <div class="col-sm-12">
+                                                        <button type="submit" class="btn btn-warning">Giao thất bại</button>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-sm-5 col-form-label">Shipper</label>
-                                        <div class="col-sm-7">
-                                            <select class="custom-select" asp-for="MaShipper" asp-items="ViewBag.Shipper">
-                                                <option value="0" disabled selected>-Chọn shipper-</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    @if(Model.MaTt != 4)
-                                    {
-                                        <div class="form-group row">
-                                            <div class="col-sm-5">
-                                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                                            </div>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="form-group row">
-                                            <div class="col-sm-5">
-                                                <button disabled type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                                            </div>
-                                        </div>
-                                    }
+                                }
 
-                                </form>
+
+
                             </address>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
-            
+
             <div class="m-t-20">
                 <div class="table-responsive">
                     <table class="table">
@@ -132,5 +130,3 @@
         </div>
     </div>
 </div>
-
-

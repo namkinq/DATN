@@ -14,6 +14,7 @@ namespace WebBanHang.Models
 
         public int MaShipper { get; set; }
         public string TenShipper { get; set; }
+        public string TenHt { get; set; }
         public string Email { get; set; }
         public string Sdt { get; set; }
         public string MatKhau { get; set; }

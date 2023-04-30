@@ -61,6 +61,19 @@ namespace WebBanHang.Areas.Admin.Controllers
 
             return View(models);
         }
+        public IActionResult Filter(int TrangThai = 0)
+        {
+            var url = $"/Admin/DonHangs?TrangThai={TrangThai}";
+            if (TrangThai == 0)
+            {
+                url = $"/Admin/DonHangs";
+            }
+            else
+            {
+                //if(maLoai==0) url = $"/Admin/SanPhams?maTh={maTh}&stt={stt}";
+            }
+            return Json(new { status = "success", RedirectUrl = url });
+        }
 
         // GET: Admin/DonHangs/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -85,7 +98,28 @@ namespace WebBanHang.Areas.Admin.Controllers
 
 
 
+        public string getLocation(string maxa, string maqh, string matp)
+        {
+            try
+            {
+                var xa = _context.XaPhuongThiTrans.AsNoTracking()
+                    .SingleOrDefault(x => x.Maxa == maxa);
+                var qh = _context.QuanHuyens.AsNoTracking()
+                    .SingleOrDefault(x => x.Maqh == maqh);
+                var tp = _context.TinhThanhPhos.AsNoTracking()
+                    .SingleOrDefault(x => x.Matp == matp);
 
+                if (xa != null && qh != null && tp != null)
+                {
+                    return $"{xa.Name}, {qh.Name}, {tp.Name}";
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+            return string.Empty;
+        }
         //
         public async Task<IActionResult> ChangeStatus(int? id)
         {
@@ -97,23 +131,112 @@ namespace WebBanHang.Areas.Admin.Controllers
             var donHang = await _context.DonHangs
                 .Include(d => d.MaKhNavigation)
                 .Include(d => d.MaShipperNavigation)
+                .Include(d => d.MaTtNavigation)
                 .Include(d => d.ChiTietDonHangs)
                 .FirstOrDefaultAsync(m => m.MaDh == id);
+
+            var ctdh = _context.ChiTietDonHangs
+                .AsNoTracking()
+                .Include(x => x.MaSpNavigation)
+                .Where(x => x.MaDh == donHang.MaDh)
+                .OrderBy(x => x.MaSp)
+                .ToList();
+
+            string fullAddress = $"{donHang.DiaChi}, {getLocation(donHang.Maxa, donHang.Maqh, donHang.Matp)}";
+            ViewBag.FullAddress = fullAddress;
+
+            ViewBag.ChiTiet = ctdh;
             if (donHang == null)
             {
                 return NotFound();
             }
-            ViewData["Kh"] = new SelectList(_context.KhachHangs, "MaKh", "TenKh", donHang.MaKh);
-            ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenShipper", donHang.MaShipper);
 
-            //filter select
-            List<SelectListItem> lsTrangThai = new List<SelectListItem>();
-            lsTrangThai.Add(new SelectListItem() { Text = "Chờ xử lý", Value = "1" });
-            lsTrangThai.Add(new SelectListItem() { Text = "Đã xác nhận", Value = "2" });
-            lsTrangThai.Add(new SelectListItem() { Text = "Đang giao hàng", Value = "3" });
-            lsTrangThai.Add(new SelectListItem() { Text = "Giao thành công", Value = "4" });
-            lsTrangThai.Add(new SelectListItem() { Text = "Giao không thành công", Value = "5" });
-            ViewData["lsTrangThai"] = lsTrangThai;
+            ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", donHang.MaShipper);
+
+            ViewData["lsTrangThai"] = new SelectList(_context.TrangThaiDonHangs, "MaTt", "TenTt", donHang.MaTt);
+
+            return View(donHang);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeStatus(int id, DonHang donHang)
+        {
+            if (id != donHang.MaDh)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var donhang = await _context.DonHangs
+                        .Include(d => d.MaKhNavigation)
+                        .Include(d => d.MaTtNavigation)
+                        .Include(d => d.ChiTietDonHangs)
+                        .Include(d => d.MaShipperNavigation)
+                        .FirstOrDefaultAsync(m => m.MaDh == id);
+
+                    var ctdh = _context.ChiTietDonHangs
+                        .AsNoTracking()
+                        .Include(x => x.MaSpNavigation)
+                        .Where(x => x.MaDh == donHang.MaDh)
+                        .OrderBy(x => x.MaSp)
+                        .ToList();
+
+                    string fullAddress = $"{donhang.DiaChi}, {getLocation(donhang.Maxa, donhang.Maqh, donhang.Matp)}";
+                    ViewBag.FullAddress = fullAddress;
+
+                    ViewBag.ChiTiet = ctdh;
+
+                    if (donhang != null)
+                    {
+                        if(donHang.MaTt == 3)
+                        {
+                            if(donHang.MaShipper == null)
+                            {
+                                _notyfService.Warning("Chưa chọn shipper");
+
+                                ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", donHang.MaShipper);
+                                ViewData["lsTrangThai"] = new SelectList(_context.TrangThaiDonHangs, "MaTt", "TenTt", donhang.MaTt);
+                                return View(donhang);
+                            }
+                            else
+                            {
+                                donhang.MaTt = donHang.MaTt;
+                                donhang.MaShipper = donHang.MaShipper;
+                                donhang.NgayShip = DateTime.Now;
+                            }
+                        }
+                        else
+                        {
+                            donhang.MaTt = donHang.MaTt;
+                        }
+                    }
+                    _context.Update(donhang);
+                    await _context.SaveChangesAsync();
+                    _notyfService.Success("Cập nhật trạng thái thành công");
+
+                    ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", donhang.MaShipper);
+                    ViewData["lsTrangThai"] = new SelectList(_context.TrangThaiDonHangs, "MaTt", "TenTt", donhang.MaTt);
+                    return View(donhang);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!DonHangExists(donHang.MaDh))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            //???
+            ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", donHang.MaShipper);
+            ViewData["lsTrangThai"] = new SelectList(_context.TrangThaiDonHangs, "MaTt", "TenTt", donHang.MaTt);
 
             return View(donHang);
         }
@@ -170,10 +293,10 @@ namespace WebBanHang.Areas.Admin.Controllers
         }
 
 
-            // POST: Admin/DonHangs/Edit/5
-            // To protect from overposting attacks, enable the specific properties you want to bind to.
-            // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-            [HttpPost]
+        // POST: Admin/DonHangs/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MaDh,NgayDat,NgayShip,TienShip,GiamGiaShip,GiamGia,DiaChi,TrangThai,MaKh,MaShipper")] DonHang donHang)
         {

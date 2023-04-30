@@ -113,7 +113,9 @@ namespace WebBanHang.Controllers
                 model.Email = khachhang.Email;
                 model.Phone = khachhang.Sdt;
                 model.Address = khachhang.DiaChi;
-                //model.TinhThanh = khachhang.Matp;
+                model.TinhThanh = khachhang.Matp;
+                model.QuanHuyen = khachhang.Maqh;
+                model.PhuongXa = khachhang.Maxa;
 
                 if (khachhang.DiaChi == null) khachhang.DiaChi = muahang.Address;
                 if (khachhang.Matp == null) khachhang.Matp = muahang.TinhThanh;
@@ -133,6 +135,8 @@ namespace WebBanHang.Controllers
                     DonHang donhang = new DonHang();
 
                     donhang.MaKh = model.CustomerId;
+                    donhang.Sdt = model.Phone;
+                    donhang.HoTen = model.FullName;
                     donhang.DiaChi = model.Address;
                     donhang.Matp = model.TinhThanh;
                     donhang.Maqh = model.QuanHuyen;

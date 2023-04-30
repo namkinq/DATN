@@ -42,7 +42,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Mã Khách hàng</th>
+                        <th>Mã KH</th>
                         <th>Ngày mua</th>
                         <th>Ngày ship</th>
                         <th>Tổng tiền</th>
@@ -84,4 +84,58 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            jQuery("#txtStt").change(function () {
+                var tt = jQuery(this).children(":selected").attr("value");
+                tt = parseFloat(tt);
+
+                $('#txtStt option')
+                    .removeAttr('selected');
+                $("#txtStt > [value=" + tt + "]").attr("selected", "true");
+
+                $.ajax({
+                    url: '/Admin/DonHangs/Filter',
+                    datatype: "json",
+                    type: "GET",
+                    data: {
+                        TrangThai: tt,
+                    },
+                    async: true,
+                    success: function (results) {
+                        if (results.status == "success") {
+                            window.location.href = results.redirectUrl;
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            });
+
+            $("#searchKey").keyup(function () {
+                var strSearchKey = $("#searchKey").val();
+                $.ajax({
+                    url: '/Admin/Search/TimSanPham/',
+                    datatype: "json",
+                    type: "POST",
+                    data: {
+                        searchKey: strSearchKey
+                    },
+                    async: true,
+                    success: function (results) {
+                        //$('#loader').hide();
+                        $('#records_table').html("");
+                        $('#records_table').html(results);
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            });
+        });
+    </script>
+}
 
