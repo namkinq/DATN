@@ -9,6 +9,7 @@ namespace WebBanHang.Models
     {
         public KhachHang()
         {
+            DanhGiaSanPhams = new HashSet<DanhGiaSanPham>();
             DonHangs = new HashSet<DonHang>();
         }
 
@@ -24,6 +25,7 @@ namespace WebBanHang.Models
         public string Maqh { get; set; }
         public string Maxa { get; set; }
 
+        public virtual ICollection<DanhGiaSanPham> DanhGiaSanPhams { get; set; }
         public virtual ICollection<DonHang> DonHangs { get; set; }
     }
 }

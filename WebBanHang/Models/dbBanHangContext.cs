@@ -18,6 +18,7 @@ namespace WebBanHang.Models
         }
 
         public virtual DbSet<ChiTietDonHang> ChiTietDonHangs { get; set; }
+        public virtual DbSet<DanhGiaSanPham> DanhGiaSanPhams { get; set; }
         public virtual DbSet<DonHang> DonHangs { get; set; }
         public virtual DbSet<KhachHang> KhachHangs { get; set; }
         public virtual DbSet<KhuyenMai> KhuyenMais { get; set; }
@@ -65,6 +66,33 @@ namespace WebBanHang.Models
                     .HasForeignKey(d => d.MaSp)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ChiTietDonHang_SanPham");
+            });
+
+            modelBuilder.Entity<DanhGiaSanPham>(entity =>
+            {
+                entity.HasKey(e => e.MaDg);
+
+                entity.ToTable("DanhGiaSanPham");
+
+                entity.Property(e => e.MaDg).HasColumnName("MaDG");
+
+                entity.Property(e => e.MaKh).HasColumnName("MaKH");
+
+                entity.Property(e => e.MaSp).HasColumnName("MaSP");
+
+                entity.Property(e => e.NoiDung).HasMaxLength(500);
+
+                entity.Property(e => e.ThoiGian).HasColumnType("datetime");
+
+                entity.HasOne(d => d.MaKhNavigation)
+                    .WithMany(p => p.DanhGiaSanPhams)
+                    .HasForeignKey(d => d.MaKh)
+                    .HasConstraintName("FK_DanhGiaSanPham_KhachHang");
+
+                entity.HasOne(d => d.MaSpNavigation)
+                    .WithMany(p => p.DanhGiaSanPhams)
+                    .HasForeignKey(d => d.MaSp)
+                    .HasConstraintName("FK_DanhGiaSanPham_SanPham");
             });
 
             modelBuilder.Entity<DonHang>(entity =>
