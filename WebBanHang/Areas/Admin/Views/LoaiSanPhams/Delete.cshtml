@@ -5,6 +5,11 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
+<style>
+    input:disabled {
+        background: #dddddd;
+    }
+</style>
 <div class="page-header">
     <h2 class="header-title">Quản lý loại sản phẩm</h2>
     <div class="header-sub-title">
@@ -19,35 +24,35 @@
 
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title">Thông tin loại sản phẩm</h4>
-        <div class="table-responsive">
-            <table class="product-info-table m-t-20">
-                <tbody>
-                    <tr>
-                        <td>ID:</td>
-                        <td class="text-dark font-weight-semibold">@Model.MaLoai</td>
-                    </tr>
-                    <tr>
-                        <td>Tên:</td>
-                        <td>@Model.TenLoai</td>
-                    </tr>
-                    <tr>
-                        <td>Mô tả:</td>
-                        <td>@Model.MoTa</td>
-                    </tr>
-                </tbody>
-            </table>
+        <h4 class="card-title">Xóa loại sản phẩm</h4>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">ID</label>
+            <div class="col-sm-2">
+                <input style="background-color:#F7F9F9;" type="text" readonly class="form-control" asp-for="MaLoai" placeholder="ID">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Tên </label>
+            <div class="col-sm-5">
+                <input style="background-color:#F7F9F9;" type="text" class="form-control" readonly asp-for="TenLoai" placeholder="Tên Role">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Mô tả</label>
+            <div class="col-sm-5">
+                <textarea style="background-color:#F7F9F9;" rows="5" class="form-control" readonly asp-for="MoTa" placeholder="Mô tả"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Bạn có chắc muốn xóa?</label>
+            <div class="col-sm-3">
+                <form asp-area="Admin" asp-action="Delete" asp-route-id="@Model.MaLoai">
+                    <input type="hidden" asp-for="MaLoai" />
+                    <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
+                </form>
+            </div>
         </div>
     </div>
 </div>
 <hr />
-
-<h3>Bạn có chắc muốn xóa?</h3>
-<div>
-    <br>
-    <form asp-action="Delete" asp-route-id="@Model.MaLoai">
-        <input type="hidden" asp-for="MaLoai" />
-        <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
-    </form>
-
-</div>

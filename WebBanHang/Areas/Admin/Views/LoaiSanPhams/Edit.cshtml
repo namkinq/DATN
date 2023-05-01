@@ -19,7 +19,7 @@
 <hr />
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title">Thông tin loại sản phẩm</h4>
+        <h4 class="card-title">Sửa loại sản phẩm</h4>
         <form asp-action="Edit" asp-route-id="@Model.MaLoai" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="MaLoai" />
@@ -27,7 +27,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">ID</label>
                 <div class="col-sm-2">
-                    <input type="text" readonly class="form-control" asp-for="MaLoai" placeholder="ID">
+                    <input style="background-color:#F7F9F9;" type="text" readonly class="form-control" asp-for="MaLoai" placeholder="ID">
                 </div>
             </div>
 
@@ -35,12 +35,14 @@
                 <label class="col-sm-2 col-form-label">Tên </label>
                 <div class="col-sm-5">
                     <input type="text" class="form-control" asp-for="TenLoai" placeholder="Tên Role">
+                    <span asp-validation-for="TenLoai" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Mô tả</label>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control" asp-for="MoTa" placeholder="Mô tả">
+                    <textarea rows="5" class="form-control" asp-for="MoTa" placeholder="Mô tả"></textarea>
+                    <span asp-validation-for="MoTa" class="text-danger"></span>
                 </div>
             </div>
 
