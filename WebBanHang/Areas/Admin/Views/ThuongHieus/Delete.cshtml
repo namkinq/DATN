@@ -1,34 +1,52 @@
 ﻿@model WebBanHang.Models.ThuongHieu
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Xóa";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h1>Delete</h1>
+<div class="page-header">
+    <h2 class="header-title">Quản lý thương hiệu sản phẩm</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <a asp-area="Admin" asp-controller="ThuongHieus" asp-action="Index" class="breadcrumb-item">Thương hiệu</a>
+            <span class="breadcrumb-item active">Xóa thương hiệu</span>
+        </nav>
+    </div>
+</div>
+<hr />
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>ThuongHieu</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TenTh)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TenTh)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoTa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoTa)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="MaTh" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Xóa thương hiệu</h4>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">ID</label>
+            <div class="col-sm-2">
+                <input style="background-color:#F7F9F9;" type="text" readonly class="form-control" asp-for="MaTh" placeholder="ID">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Tên </label>
+            <div class="col-sm-5">
+                <input style="background-color:#F7F9F9;" type="text" class="form-control" readonly asp-for="TenTh" placeholder="Tên Role">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Mô tả</label>
+            <div class="col-sm-5">
+                <textarea style="background-color:#F7F9F9;" rows="5" class="form-control" readonly asp-for="MoTa" placeholder="Mô tả"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Bạn có chắc muốn xóa?</label>
+            <div class="col-sm-3">
+                <form asp-area="Admin" asp-action="Delete" asp-route-id="@Model.MaTh">
+                    <input type="hidden" asp-for="MaTh" />
+                    <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

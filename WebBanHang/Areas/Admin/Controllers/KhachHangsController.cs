@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,32 +15,65 @@ namespace WebBanHang.Areas.Admin.Controllers
     public class KhachHangsController : Controller
     {
         private readonly dbBanHangContext _context;
+        public INotyfService _notyfService { get; }
 
-        public KhachHangsController(dbBanHangContext context)
+        public KhachHangsController(dbBanHangContext context, INotyfService notyfService)
         {
             _context = context;
+            _notyfService = notyfService;
         }
 
         // GET: Admin/KhachHangs
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int page = 1, int TrangThai = -1)
         {
-            //filter
-            List<SelectListItem> lsBlock = new List<SelectListItem>();
-            lsBlock.Add(new SelectListItem() { Text = "Hoạt động", Value = "false" });
-            lsBlock.Add(new SelectListItem() { Text = "Khóa", Value = "true" });
-            ViewData["lsBlock"] = lsBlock;
+            var pageNumber = page;
+            var pageSize = 10;
+
+            List<KhachHang> lsKH = new List<KhachHang>();
+
+            //filter op
+            if (TrangThai != -1)
+            {
+                lsKH = _context.KhachHangs
+                .AsNoTracking()
+                .Where(x => x.Khoa == Convert.ToBoolean(TrangThai))
+                .OrderByDescending(x => x.MaKh).ToList();
+            }
+            else
+            {
+                lsKH = _context.KhachHangs
+                .AsNoTracking()
+                .OrderByDescending(x => x.MaKh).ToList();
+            }
 
             //page
-            var pageNumber = page == null || page < 0 ? 1 : page.Value;
-            var pageSize = 20;
-            var lsCustomers = _context.KhachHangs.AsNoTracking()
-                .OrderByDescending(x => x.MaKh);
-            PagedList<KhachHang> models = new PagedList<KhachHang>(lsCustomers, pageNumber, pageSize);
+            PagedList<KhachHang> models = new PagedList<KhachHang>(lsKH.AsQueryable(), pageNumber, pageSize);
+            
 
             ViewBag.CurrentPage = pageNumber;
+            ViewBag.CurrentTrangThai = TrangThai;
 
-            //var dbBanHangContext = _context.KhachHangs;
+            //filter
+            List<SelectListItem> lsBlock = new List<SelectListItem>();
+            lsBlock.Add(new SelectListItem() { Text = "Hoạt động", Value = "0" });
+            lsBlock.Add(new SelectListItem() { Text = "Khóa", Value = "1" });
+            ViewData["lsTrangThai"] = lsBlock;
+
+
             return View(models);
+        }
+        public IActionResult Filter(int TrangThai = -1)
+        {
+            var url = $"/Admin/KhachHangs?TrangThai={TrangThai}";
+            if (TrangThai == -1)
+            {
+                url = $"/Admin/KhachHangs";
+            }
+            else
+            {
+                //if(maLoai==0) url = $"/Admin/SanPhams?maTh={maTh}&stt={stt}";
+            }
+            return Json(new { status = "success", RedirectUrl = url });
         }
 
         // GET: Admin/KhachHangs/Details/5
@@ -81,6 +115,83 @@ namespace WebBanHang.Areas.Admin.Controllers
             }
             return View(khachHang);
         }
+
+
+        public string getLocation(string maxa, string maqh, string matp)
+        {
+            try
+            {
+                var xa = _context.XaPhuongThiTrans.AsNoTracking()
+                    .SingleOrDefault(x => x.Maxa == maxa);
+                var qh = _context.QuanHuyens.AsNoTracking()
+                    .SingleOrDefault(x => x.Maqh == maqh);
+                var tp = _context.TinhThanhPhos.AsNoTracking()
+                    .SingleOrDefault(x => x.Matp == matp);
+
+                if (xa != null && qh != null && tp != null)
+                {
+                    return $"{xa.Name}, {qh.Name}, {tp.Name}";
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+            return string.Empty;
+        }
+        public async Task<IActionResult> Khoa(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var khachHang = await _context.KhachHangs.FindAsync(id);
+            if (khachHang == null)
+            {
+                return NotFound();
+            }
+            string fullAddress = $"{khachHang.DiaChi}, {getLocation(khachHang.Maxa, khachHang.Maqh, khachHang.Matp)}";
+            ViewBag.FullAddress = fullAddress;
+            return View(khachHang);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Khoa(int id, [Bind("MaKh,TenKh,Email,Sdt,MatKhau,DiaChi,Khoa")] KhachHang khachHang)
+        {
+            if (id != khachHang.MaKh)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    khachHang.Khoa = true;
+                    _context.Update(khachHang);
+                    await _context.SaveChangesAsync();
+                    _notyfService.Success("Khóa thành công");
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!KhachHangExists(khachHang.MaKh))
+                    {
+                        _notyfService.Warning("Có lỗi khi khóa");
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(khachHang);
+        }
+
+
+
 
         // GET: Admin/KhachHangs/Edit/5
         public async Task<IActionResult> Edit(int? id)

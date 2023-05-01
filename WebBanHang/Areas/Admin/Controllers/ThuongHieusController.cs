@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace WebBanHang.Areas.Admin.Controllers
     public class ThuongHieusController : Controller
     {
         private readonly dbBanHangContext _context;
+        public INotyfService _notyfService { get; }
 
-        public ThuongHieusController(dbBanHangContext context)
+        public ThuongHieusController(dbBanHangContext context, INotyfService notyfService)
         {
             _context = context;
+            _notyfService = notyfService;
         }
 
         // GET: Admin/ThuongHieus
@@ -139,10 +142,20 @@ namespace WebBanHang.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var thuongHieu = await _context.ThuongHieus.FindAsync(id);
-            _context.ThuongHieus.Remove(thuongHieu);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var thuongHieu = await _context.ThuongHieus.FindAsync(id);
+                _context.ThuongHieus.Remove(thuongHieu);
+                await _context.SaveChangesAsync();
+                _notyfService.Success("Xóa thành công");
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                _notyfService.Warning("Xóa thất bại");
+                return RedirectToAction(nameof(Index));
+            }
+            
         }
 
         private bool ThuongHieuExists(int id)

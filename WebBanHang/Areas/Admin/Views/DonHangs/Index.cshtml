@@ -30,7 +30,7 @@
                     <div class="m-b-10 ">
                         <div class="input-affix" style="min-width: 200px;">
                             <i class="prefix-icon anticon anticon-search opacity-04"></i>
-                            <input id="searchKey" name="searchKey" type="text" class="form-control" placeholder="Tìm">
+                            <input id="searchKey" name="searchKey" type="text" class="form-control" placeholder="Tìm mã đơn hàng">
                         </div>
                     </div>
 
@@ -78,7 +78,7 @@
 
             <div aria-label="Page navigation example">
                 <ul class="pagination">
-                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="DonHangs" asp-action="Index" asp-route-MaLoai="@ViewBag.CurrentTrangThai" />
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="DonHangs" asp-action="Index" asp-route-TrangThai="@ViewBag.CurrentTrangThai" />
                 </ul>
             </div>
         </div>
@@ -118,7 +118,7 @@
             $("#searchKey").keyup(function () {
                 var strSearchKey = $("#searchKey").val();
                 $.ajax({
-                    url: '/Admin/Search/TimSanPham/',
+                    url: '/Admin/Search/TimDonHang/',
                     datatype: "json",
                     type: "POST",
                     data: {

@@ -145,11 +145,20 @@ namespace WebBanHang.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var loaiSanPham = await _context.LoaiSanPhams.FindAsync(id);
-            _context.LoaiSanPhams.Remove(loaiSanPham);
-            await _context.SaveChangesAsync();
-            _notyfService.Success("Xóa thành công");
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var loaiSanPham = await _context.LoaiSanPhams.FindAsync(id);
+                _context.LoaiSanPhams.Remove(loaiSanPham);
+                await _context.SaveChangesAsync();
+                _notyfService.Success("Xóa thành công");
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                _notyfService.Warning("Xóa thất bại");
+                return RedirectToAction(nameof(Index));
+            }
+            
         }
 
         private bool LoaiSanPhamExists(int id)

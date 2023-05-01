@@ -74,7 +74,7 @@ namespace WebBanHang.Areas.Admin.Controllers
 
         //
         // Filter(int maLoai=0, int maTh=0, int stt=-1)
-        public IActionResult Filter(int MaLoai = 0, int TH=0, int Stt=-1)
+        public IActionResult Filter(int MaLoai = 0, int Stt=-1)
         {
             var url = $"/Admin/SanPhams?MaLoai={MaLoai}";
             if (MaLoai == 0)
@@ -234,11 +234,20 @@ namespace WebBanHang.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sanPham = await _context.SanPhams.FindAsync(id);
-            _context.SanPhams.Remove(sanPham);
-            await _context.SaveChangesAsync();
-            _notyfService.Success("Xóa thành công");
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var sanPham = await _context.SanPhams.FindAsync(id);
+                _context.SanPhams.Remove(sanPham);
+                await _context.SaveChangesAsync();
+                _notyfService.Success("Xóa thành công");
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                _notyfService.Warning("Xóa thất bại");
+                return RedirectToAction(nameof(Index));
+            }
+            
         }
 
         private bool SanPhamExists(int id)

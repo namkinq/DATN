@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebBanHang.Models;
@@ -40,6 +41,56 @@ namespace WebBanHang.Areas.Admin.Controllers
             else
             {
                 return PartialView("ListSanPhamSearchPartial", ls);
+
+            }
+        }
+
+        public IActionResult TimDonHang(string searchKey)
+        {
+            List<DonHang> ls = new List<DonHang>();
+            if (string.IsNullOrEmpty(searchKey) || searchKey.Length < 1)
+            {
+                return PartialView("TimDonHangSearchPartial", null);
+            }
+
+            ls = _context.DonHangs
+                .AsNoTracking()
+                .Include(x => x.MaTtNavigation)
+                .Where(x => x.MaDh == Convert.ToInt32(searchKey))
+                .OrderByDescending(x => x.NgayDat)
+                .Take(10)
+                .ToList();
+            if (ls == null)
+            {
+                return PartialView("TimDonHangSearchPartial", null);
+            }
+            else
+            {
+                return PartialView("TimDonHangSearchPartial", ls);
+
+            }
+        }
+        public IActionResult TimKH(string searchKey)
+        {
+            List<KhachHang> ls = new List<KhachHang>();
+            if (string.IsNullOrEmpty(searchKey) || searchKey.Length < 1)
+            {
+                return PartialView("TimKHSearchPartial", null);
+            }
+
+            ls = _context.KhachHangs
+                .AsNoTracking()
+                .Where(x => x.Email.Contains( searchKey) ||x.Sdt.Contains(searchKey))
+                .OrderByDescending(x => x.MaKh)
+                .Take(10)
+                .ToList();
+            if (ls == null)
+            {
+                return PartialView("TimKHSearchPartial", null);
+            }
+            else
+            {
+                return PartialView("TimKHSearchPartial", ls);
 
             }
         }
