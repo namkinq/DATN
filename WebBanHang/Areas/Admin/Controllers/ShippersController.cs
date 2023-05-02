@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using PagedList.Core;
+using WebBanHang.Extension;
+using WebBanHang.Helper;
 using WebBanHang.Models;
 
 namespace WebBanHang.Areas.Admin.Controllers
@@ -13,16 +17,31 @@ namespace WebBanHang.Areas.Admin.Controllers
     public class ShippersController : Controller
     {
         private readonly dbBanHangContext _context;
+        public INotyfService _notyfService { get; }
 
-        public ShippersController(dbBanHangContext context)
+        public ShippersController(dbBanHangContext context, INotyfService notyfService)
         {
             _context = context;
+            _notyfService = notyfService;
         }
 
         // GET: Admin/Shippers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Shippers.ToListAsync());
+            var pageNumber = page;
+            var pageSize = 10;
+
+            List<Shipper> lsShip = new List<Shipper>();
+
+            lsShip = _context.Shippers
+                .AsNoTracking()
+                .OrderByDescending(x => x.MaShipper).ToList();
+            //
+            PagedList<Shipper> models = new PagedList<Shipper>(lsShip.AsQueryable(), pageNumber, pageSize);
+
+            ViewBag.CurrentPage = pageNumber;
+
+            return View(models);
         }
 
         // GET: Admin/Shippers/Details/5
@@ -58,8 +77,15 @@ namespace WebBanHang.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                string salt = Utilities.GetRandomKey();
+                shipper.MatKhau = (shipper.MatKhau + salt.Trim()).ToMD5();
+                shipper.Salt = salt;
+                shipper.TenHt = shipper.TenShipper + " - " + shipper.Sdt;
+
                 _context.Add(shipper);
                 await _context.SaveChangesAsync();
+
+                _notyfService.Success("Tạo mới thành công");
                 return RedirectToAction(nameof(Index));
             }
             return View(shipper);
@@ -99,11 +125,13 @@ namespace WebBanHang.Areas.Admin.Controllers
                 {
                     _context.Update(shipper);
                     await _context.SaveChangesAsync();
+                    _notyfService.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!ShipperExists(shipper.MaShipper))
                     {
+                        _notyfService.Warning("Cập nhật thất bại");
                         return NotFound();
                     }
                     else
@@ -139,10 +167,20 @@ namespace WebBanHang.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var shipper = await _context.Shippers.FindAsync(id);
-            _context.Shippers.Remove(shipper);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var shipper = await _context.Shippers.FindAsync(id);
+                _context.Shippers.Remove(shipper);
+                await _context.SaveChangesAsync();
+                _notyfService.Success("Xóa thành công");
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                _notyfService.Warning("Xóa thất bại");
+                return RedirectToAction(nameof(Index));
+            }
+            
         }
 
         private bool ShipperExists(int id)

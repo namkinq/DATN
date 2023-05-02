@@ -17,14 +17,14 @@ namespace WebBanHang.ModelViews
         [Required(ErrorMessage = "Vui lòng nhập email")]
         [DataType(DataType.EmailAddress)]
         [EmailAddress]
-        [Remote(action:"ValidateEmail", controller:"Accounts")]
+        [Remote(action:"ValidateEmail", controller: "Accounts", ErrorMessage = "Email đã được sử dụng")]
         public string Email { get; set; }
 
         [MaxLength(10)]
         [Display(Name = "Số điện thoại")]
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
         [DataType(DataType.PhoneNumber)]
-        [Remote(action: "ValidatePhone", controller: "Accounts")]
+        [Remote(action: "ValidatePhone", controller: "Accounts", ErrorMessage = "SĐT đã được sử dụng")]
         public string Phone { get; set; }
 
         [MaxLength(50)]

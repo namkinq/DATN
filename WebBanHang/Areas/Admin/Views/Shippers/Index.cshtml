@@ -1,72 +1,99 @@
-﻿@model IEnumerable<WebBanHang.Models.Shipper>
+﻿@using PagedList.Core.Mvc
+@model PagedList.Core.IPagedList<WebBanHang.Models.Shipper>
 
 @{
-    ViewData["Title"] = "Index";
+    int CurrentPage = ViewBag.CurrentPage;
+    ViewData["Title"] = "Shipper";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h1>Index</h1>
+<div class="page-header">
+    <h2 class="header-title">Quản lý shipper</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <span class="breadcrumb-item active">Danh sách shipper</span>
+        </nav>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row m-b-30">
+            @*<div class="col-lg-8">
+            <div class="d-md-flex">
+            <div class="m-b-10 m-r-15">
+            <select class="custom-select" style="min-width: 160px;" id="txtMaLoai" name="txtMaLoai" asp-items="ViewBag.LoaiSP">
+            <option selected>-Chọn loại SP-</option>
+            <option value="0">Tất cả</option>
+            </select>
+            </div>
+            <div class="m-b-10 ">
+            <div class="input-affix" style="min-width: 200px;">
+            <i class="prefix-icon anticon anticon-search opacity-04"></i>
+            <input id="searchKey" name="searchKey" type="text" class="form-control" placeholder="Tìm tên sản phẩm">
+            </div>
+            </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TenShipper)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sdt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MatKhau)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LoaiXe)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BienSo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Salt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TenShipper)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sdt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MatKhau)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoaiXe)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BienSo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Salt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaShipper">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaShipper">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaShipper">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+            </div>
+            </div>*@
+            <div class="col-lg-4">
+                <a class="btn btn-primary" asp-area="Admin" asp-controller="Shippers" asp-action="Create">
+                    <i class="anticon anticon-plus-circle m-r-5"></i>
+                    <span>Thêm mới</span>
+                </a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>SĐT</th>
+                        <th class="text-right">#</th>
+                    </tr>
+                </thead>
+                <tbody id="records_table">
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.MaShipper
+                                </td>
+                                <td>
+                                    @item.TenShipper
+                                </td>
+                                <td>
+                                    @item.Email
+                                </td>
+                                <td>
+                                    @item.Sdt
+                                </td>
+                                <td class="text-right">
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right" asp-area="Admin" asp-controller="Shippers" asp-action="Delete" asp-route-id="@item.MaShipper">
+                                        <i class="anticon anticon-delete"></i>
+                                    </a>
+
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-area="Admin" asp-controller="Shippers" asp-action="Edit" asp-route-id="@item.MaShipper">
+                                        <i class="anticon anticon-edit"></i>
+                                    </a>
+
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+
+            <div aria-label="Page navigation example">
+                <ul class="pagination">
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="Shippers" asp-action="Index" />
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

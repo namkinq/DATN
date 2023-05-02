@@ -29,7 +29,7 @@ namespace WebBanHang.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ValidatePhone(string Phone)
+        public JsonResult ValidatePhone( string Phone)
         {
             try
             {
@@ -37,19 +37,19 @@ namespace WebBanHang.Controllers
                     .SingleOrDefault(x => x.Sdt.ToLower() == Phone);
                 if (kh != null)
                 {
-                    return Json(data: "Số điện thoại: " + Phone + " đã được sử dụng");
+                    return Json(false);
                 }
-                else return Json(data: true);
+                else return Json(true);
             }
             catch
             {
-                return Json(data: true);
+                return Json(false);
             }
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ValidateEmail(string Email)
+        public JsonResult ValidateEmail(string Email)
         {
             try
             {
@@ -57,13 +57,13 @@ namespace WebBanHang.Controllers
                     .SingleOrDefault(x => x.Email.ToLower() == Email);
                 if (kh != null)
                 {
-                    return Json(data: "Email: " + Email + " đã được sử dụng");
+                    return Json(false);
                 }
-                else return Json(data: true);
+                else return Json(true);
             }
             catch
             {
-                return Json(data: true);
+                return Json(false);
             }
         }
 
