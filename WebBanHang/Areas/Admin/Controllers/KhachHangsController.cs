@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,12 @@ namespace WebBanHang.Areas.Admin.Controllers
         // GET: Admin/KhachHangs
         public async Task<IActionResult> Index(int page = 1, int TrangThai = -1)
         {
+            var taikhoanID = HttpContext.Session.GetString("AdminId");
+            if (string.IsNullOrEmpty(taikhoanID))
+            {
+                return RedirectToAction("DangNhap", "AccountsAdmin");
+            }
+
             var pageNumber = page;
             var pageSize = 10;
 

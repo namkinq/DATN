@@ -47,6 +47,7 @@ namespace WebBanHang.Controllers
                 }
                 var donhang = await _context.DonHangs
                     .Include(x=>x.MaTtNavigation)
+                    .Include(x=>x.MaShipperNavigation)
                     .FirstOrDefaultAsync(m => m.MaDh == id && Convert.ToInt32(taikhoanID) == m.MaKh);
                 if(donhang == null)
                 {

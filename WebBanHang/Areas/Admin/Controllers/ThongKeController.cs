@@ -1,5 +1,8 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using WebBanHang.Models;
 
@@ -20,14 +23,40 @@ namespace WebBanHang.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            var salesData = _context.DonHangs.GroupBy(s => s.NgayDat.Value.Month)
-                                .Select(g => new { date = g.Key, totalSales = g.Sum(s => s.TongTien) })
-                                .ToList();
+            var taikhoanID = HttpContext.Session.GetString("AdminId");
+            if (string.IsNullOrEmpty(taikhoanID))
+            {
+                return RedirectToAction("DangNhap", "AccountsAdmin");
+            }
+
+            var salesData = _context.DonHangs
+            .Where(s => s.NgayDat >= DateTime.Today.AddMonths(-12) && s.MaTt == 4)
+            .GroupBy(s => s.NgayDat.Value.Month)
+            .Select(g => new { Month = g.Key, SalesTotal = g.Sum(s => s.TongTien) })
+            .OrderBy(g => g.Month)
+            .ToList();
 
             ViewBag.SalesData = salesData;
 
-            ViewBag.Data = "10,10,50,20";
-            ViewBag.ObjectName = "'Test','Test1','Test2','Test3'";
+
+            var topSellingProducts = _context.ChiTietDonHangs
+                .Include(x=>x.MaSpNavigation)
+            .GroupBy(od => od.MaSp)
+            .Select(g => new { ProductId = g.Key, Quantity = g.Sum(od => od.SoLuong) })
+            .OrderByDescending(g => g.Quantity)
+            .Take(5)
+            .ToList();
+
+            var productIds = topSellingProducts.Select(p => p.ProductId).ToList();
+
+            var productsName = _context.SanPhams
+                .Where(p => productIds.Contains(p.MaSp))
+                .Select(g=> new {Name = g.TenSp})
+                .ToList();
+
+            ViewBag.TopSellingProducts = topSellingProducts;
+            ViewBag.ProductName = productsName;
+
             return View();
         }
     }

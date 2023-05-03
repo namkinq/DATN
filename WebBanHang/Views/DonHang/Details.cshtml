@@ -76,6 +76,9 @@
 @if (Model.ChiTietDonHang != null)
 {
     <h5 style="font-family:Verdana">Đơn hàng #@Model.DonHang.MaDh</h5>
+    <br />
+    <p>Tổng tiền: @Model.DonHang.TongTien.Value.ToString("#,##0") đ</p>
+
     <p>Trạng thái: @Model.DonHang.MaTtNavigation.TenTt</p>
 
     @if (Model.DonHang.MaTt == 1)
@@ -85,6 +88,12 @@
             <button class="btn btn-secondary btn-primary-hover" type="submit">Hủy đơn hàng</button>
         </form>
     }
+    @if (Model.DonHang.MaShipper != null)
+    {
+        <p>Shipper: @Model.DonHang.MaShipperNavigation.TenShipper - SĐT: @Model.DonHang.MaShipperNavigation.Sdt</p>
+        @*<p>Loại xe: @Model.DonHang.MaShipperNavigation.LoaiXe</p>
+        <p>Biển số: @Model.DonHang.MaShipperNavigation.BienSo</p>*@
+    }
     @if (Model.DonHang.MaTt == 4)
     {
         <form asp-controller="DonHang" asp-action="DanhGia" method="post">
@@ -92,13 +101,7 @@
             <button class="btn btn-secondary btn-primary-hover" type="submit">Đánh giá sản phẩm</button>
         </form>
     }
-    @if (Model.DonHang.MaShipper != null)
-    {
-        <p>Shipper: @Model.DonHang.MaShipperNavigation.TenShipper</p>
-        <p>SĐT: @Model.DonHang.MaShipperNavigation.Sdt</p>
-        <p>Loại xe: @Model.DonHang.MaShipperNavigation.LoaiXe</p>
-        <p>Biển số: @Model.DonHang.MaShipperNavigation.BienSo</p>
-    }
+    
 
     <br />
     <div class="table-responsive">

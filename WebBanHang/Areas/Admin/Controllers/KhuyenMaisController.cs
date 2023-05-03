@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,15 +15,22 @@ namespace WebBanHang.Areas.Admin.Controllers
     public class KhuyenMaisController : Controller
     {
         private readonly dbBanHangContext _context;
+        public INotyfService _notyfService { get; }
 
-        public KhuyenMaisController(dbBanHangContext context)
+        public KhuyenMaisController(dbBanHangContext context, INotyfService notyfService)
         {
             _context = context;
+            _notyfService = notyfService;
         }
 
         // GET: Admin/KhuyenMais
         public async Task<IActionResult> Index()
         {
+            var taikhoanID = HttpContext.Session.GetString("AdminId");
+            if (string.IsNullOrEmpty(taikhoanID))
+            {
+                return RedirectToAction("DangNhap", "AccountsAdmin");
+            }
             return View(await _context.KhuyenMais.ToListAsync());
         }
 
@@ -60,6 +69,7 @@ namespace WebBanHang.Areas.Admin.Controllers
             {
                 _context.Add(khuyenMai);
                 await _context.SaveChangesAsync();
+                _notyfService.Success("Tạo mới thành công");
                 return RedirectToAction(nameof(Index));
             }
             return View(khuyenMai);
@@ -99,11 +109,13 @@ namespace WebBanHang.Areas.Admin.Controllers
                 {
                     _context.Update(khuyenMai);
                     await _context.SaveChangesAsync();
+                    _notyfService.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!KhuyenMaiExists(khuyenMai.MaCtkm))
                     {
+                        _notyfService.Warning("Có lỗi xảy ra");
                         return NotFound();
                     }
                     else
@@ -139,15 +151,69 @@ namespace WebBanHang.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var khuyenMai = await _context.KhuyenMais.FindAsync(id);
-            _context.KhuyenMais.Remove(khuyenMai);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var khuyenMai = await _context.KhuyenMais.FindAsync(id);
+                _context.KhuyenMais.Remove(khuyenMai);
+                await _context.SaveChangesAsync();
+                _notyfService.Success("Xóa thành công");
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                _notyfService.Warning("Xóa thất bại");
+                return RedirectToAction(nameof(Index));
+
+            }
+
         }
 
         private bool KhuyenMaiExists(int id)
         {
             return _context.KhuyenMais.Any(e => e.MaCtkm == id);
+        }
+
+
+
+        public async Task<IActionResult> GiamGia()
+        {
+            ViewData["LoaiSP"] = new SelectList(_context.LoaiSanPhams, "MaLoai", "TenLoai");
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GiamGia(int MaLoai, int PhanTram)
+        {
+            var loaiSanPham = await _context.LoaiSanPhams
+                .FirstOrDefaultAsync(m => m.MaLoai == MaLoai);
+            if (loaiSanPham == null)
+            {
+                return RedirectToAction("GiamGia");
+            }
+
+            var lsSP = _context.SanPhams.Where(x => x.MaLoai == MaLoai);
+            if (lsSP.Count() == 0)
+            {
+                _notyfService.Warning("Loại sản phẩm không có sản phẩm nào");
+                return RedirectToAction("GiamGia");
+            }
+            if (PhanTram == 0)
+            {
+                _notyfService.Warning("Phần trăm giảm lớn hơn 0");
+                return RedirectToAction("GiamGia");
+            }
+
+            foreach (var item in lsSP)
+            {
+                item.GiaGiam = item.GiaBan * (PhanTram / 100);
+                _context.SanPhams.Update(item);
+            }
+
+
+
+            await _context.SaveChangesAsync();
+            _notyfService.Success("Giảm giá thành công");
+
+            return RedirectToAction("GiamGia");
         }
     }
 }

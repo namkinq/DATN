@@ -1,4 +1,5 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,12 @@ namespace WebBanHang.Areas.Ship.Controllers
         }
         public async Task<IActionResult> Index(int page = 1, int TrangThai = 0)
         {
+            var taikhoanID = HttpContext.Session.GetString("ShipId");
+            if (string.IsNullOrEmpty(taikhoanID))
+            {
+                return RedirectToAction("DangNhap", "AccountsShip");
+            }
+
             var pageNumber = page;
             var pageSize = 10;
 
@@ -39,7 +46,7 @@ namespace WebBanHang.Areas.Ship.Controllers
                     lsDonHang = _context.DonHangs
                 .AsNoTracking()
                 .Include(x => x.MaTtNavigation)
-                .Where(x => x.MaTt == TrangThai)
+                .Where(x => x.MaTt == TrangThai && x.MaShipper == Convert.ToInt32(taikhoanID))
                 .OrderByDescending(x => x.MaDh).ToList();
                 }
                 else
@@ -48,6 +55,7 @@ namespace WebBanHang.Areas.Ship.Controllers
                     lsDonHang = _context.DonHangs
                 .AsNoTracking()
                 .Where(x => x.MaTt == 3 || x.MaTt == 4 || x.MaTt == 5)
+                .Where(x=> x.MaShipper == Convert.ToInt32(taikhoanID))
                 .Include(x => x.MaTtNavigation)
                 .OrderByDescending(x => x.MaDh).ToList();
                 }
@@ -57,6 +65,7 @@ namespace WebBanHang.Areas.Ship.Controllers
                 lsDonHang = _context.DonHangs
                 .AsNoTracking()
                 .Where(x => x.MaTt == 3 || x.MaTt == 4 || x.MaTt == 5)
+                .Where(x => x.MaShipper == Convert.ToInt32(taikhoanID))
                 .Include(x => x.MaTtNavigation)
                 .OrderByDescending(x => x.MaDh).ToList();
             }
