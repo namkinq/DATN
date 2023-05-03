@@ -13,5 +13,6 @@ namespace WebBanHang.Models
         public string Sdt { get; set; }
         public string MatKhau { get; set; }
         public string Salt { get; set; }
+        public bool? Khoa { get; set; }
     }
 }

@@ -68,6 +68,11 @@ namespace WebBanHang.Areas.Ship.Controllers
                         _notyfService.Warning("Thông tin đăng nhập không chính xác");
                         return View(customer);
                     }
+                    if (khachhang.Khoa == true)
+                    {
+                        _notyfService.Error("Tài khoản bị khóa");
+                        return View(customer);
+                    }
 
                     // lưu session
                     HttpContext.Session.SetString("ShipId", khachhang.MaShipper.ToString());

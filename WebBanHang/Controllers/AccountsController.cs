@@ -29,7 +29,7 @@ namespace WebBanHang.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public JsonResult ValidatePhone( string Phone)
+        public JsonResult ValidatePhone(string Phone)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace WebBanHang.Controllers
                 {
                     var lsDonHang = _context.DonHangs
                         .Include(x => x.ChiTietDonHangs)
-                        .Include(x=>x.MaTtNavigation)
+                        .Include(x => x.MaTtNavigation)
                         .AsNoTracking()
                         .Where(x => x.MaKh == khachhang.MaKh)
                         .OrderByDescending(x => x.NgayDat).ToList();
@@ -196,7 +196,11 @@ namespace WebBanHang.Controllers
                         _notyfService.Warning("Thông tin đăng nhập không chính xác");
                         return View(customer);
                     }
-                    if (khachhang.Khoa == true) return RedirectToAction("ThongBao", "Accounts");
+                    if (khachhang.Khoa == true)
+                    {
+                        _notyfService.Error("Tài khoản bị khóa");
+                        return View(customer);
+                    }
 
                     // lưu session
                     HttpContext.Session.SetString("CustomerId", khachhang.MaKh.ToString());
@@ -239,7 +243,7 @@ namespace WebBanHang.Controllers
             try
             {
                 var taikhoanID = HttpContext.Session.GetString("CustomerId");
-                if(taikhoanID == null)
+                if (taikhoanID == null)
                 {
                     return RedirectToAction("DangNhap", "Accounts");
                 }
@@ -252,7 +256,7 @@ namespace WebBanHang.Controllers
                     var pass = (model.PasswordNow.Trim() + taikhoan.Salt.Trim()).ToMD5();
                     if (pass == taikhoan.MatKhau)
                     {
-                        if(model.Password != null)
+                        if (model.Password != null)
                         {
                             string passnew = (model.Password.Trim() + taikhoan.Salt.Trim()).ToMD5();
                             taikhoan.MatKhau = passnew;
@@ -268,7 +272,7 @@ namespace WebBanHang.Controllers
                         return RedirectToAction("Dashboard", "Accounts");
                     }
                 }
-                
+
             }
             catch
             {

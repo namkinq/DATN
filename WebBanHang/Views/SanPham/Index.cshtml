@@ -7,6 +7,7 @@
     int CurrentPage = ViewBag.CurrentPage;
     int PageNext = CurrentPage + 1;
     List<LoaiSanPham> dmsp = ViewBag.DMSP;
+    List<SanPham> spm = ViewBag.SPM;
 }
 
 
@@ -40,12 +41,12 @@
                         @await Html.PartialAsync("_DMSPPartialView.cshtml", dmsp)
 
                         <div class="widgets-area mb-9">
-                            <h2 class="widgets-title mb-5">Sản phẩm nổi bật</h2>
+                            <h2 class="widgets-title mb-5">Sản phẩm mới</h2>
                             <div class="widgets-item">
                                 <div class="swiper-container widgets-list-slider">
                                     <div class="swiper-wrapper">
                                         <div class="swiper-slide">
-                                            @foreach (var item in Model)
+                                            @foreach (var item in spm)
                                             {
                                                 <div class="product-list-item">
                                                     <div class="product-img img-zoom-effect">
@@ -71,7 +72,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                break;
                                             }
 
                                         </div>

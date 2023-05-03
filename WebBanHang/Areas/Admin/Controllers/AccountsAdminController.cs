@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -106,6 +107,69 @@ namespace WebBanHang.Areas.Admin.Controllers
             //HttpContext.SignOutAsync();
             HttpContext.Session.Remove("AdminId");
             return RedirectToAction("DangNhap");
+        }
+
+        [HttpGet]
+        public IActionResult Info()
+        {
+            var taikhoanID = HttpContext.Session.GetString("AdminId");
+            if (taikhoanID != null)
+            {
+                var khachhang = _context.QuanTriViens.AsNoTracking()
+                    .SingleOrDefault(x => x.MaQtv == Convert.ToInt32(taikhoanID));
+                if (khachhang != null)
+                {
+
+                    return View(khachhang);
+                }
+
+            }
+
+            return RedirectToAction("DangNhap");
+        }
+        [HttpPost]
+        public IActionResult Info(QuanTriVien model, string MKC,string MKM, string NLMKM)
+        {
+            try
+            {
+                var taikhoanID = HttpContext.Session.GetString("AdminId");
+                if (taikhoanID == null)
+                {
+                    return RedirectToAction("DangNhap");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    var taikhoan = _context.QuanTriViens.Find(Convert.ToInt32(taikhoanID));
+                    if (taikhoan == null) return RedirectToAction("DangNhap");
+
+                    var pass = (MKC.Trim() + taikhoan.Salt.Trim()).ToMD5();
+                    if (pass == taikhoan.MatKhau)
+                    {
+                        if (MKM != null)
+                        {
+                            string passnew = (MKM.Trim() + taikhoan.Salt.Trim()).ToMD5();
+                            taikhoan.MatKhau = passnew;
+                        }
+
+                        taikhoan.TenQtv = model.TenQtv;
+
+                        _context.Update(taikhoan);
+                        _context.SaveChanges();
+                        _notyfService.Success("Cập nhật thành công");
+
+                        return View();
+                    }
+                }
+
+            }
+            catch
+            {
+                _notyfService.Warning("Cập nhật không thành công");
+                return View();
+            }
+            _notyfService.Warning("Cập nhật không thành công");
+            return View();
         }
     }
 }

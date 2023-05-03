@@ -266,17 +266,15 @@ namespace WebBanHang.Models
 
             modelBuilder.Entity<QuanTriVien>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.MaQtv);
 
                 entity.ToTable("QuanTriVien");
+
+                entity.Property(e => e.MaQtv).HasColumnName("MaQTV");
 
                 entity.Property(e => e.Email)
                     .HasMaxLength(100)
                     .IsUnicode(false);
-
-                entity.Property(e => e.MaQtv)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("MaQTV");
 
                 entity.Property(e => e.MatKhau).HasMaxLength(50);
 

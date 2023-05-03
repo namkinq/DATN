@@ -53,7 +53,15 @@ namespace WebBanHang.Controllers
                     .OrderBy(x => x.MaLoai).ToList();
                 ViewBag.DMSP = dmsp;
                 //
-
+                var spmoi = _context.SanPhams
+                    .AsNoTracking()
+                    .Include(s => s.MaLoaiNavigation)
+                    .Include(s => s.MaThNavigation)
+                    .OrderByDescending(x => x.MaSp)
+                    .Take(3)
+                    .ToList();
+                ViewBag.SPM = spmoi;
+                //
                 return View(models);
             }
             catch

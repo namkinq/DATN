@@ -36,6 +36,24 @@
     </div>
     <div class="checkout-area section-space-y-axis-100">
         <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="coupon-accordion">
+                        
+                        <h3 style="font-family:Verdana">Bạn có mã giảm giá? <span id="showcoupon">Nhập mã tại đây</span></h3>
+                        <div id="checkout_coupon" class="coupon-checkout-content">
+                            <div class="coupon-info">
+                                <form action="javascript:void(0)">
+                                    <p class="checkout-coupon">
+                                        <input placeholder="CODE" type="text">
+                                        <input class="coupon-inner_btn" value="Áp dụng" type="submit">
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <form asp-controller="Checkout" asp-action="Index" method="post">
                 <input hidden asp-for="CustomerId" />
                 <div class="row">
@@ -107,12 +125,13 @@
                     <div class="col-lg-6 col-12">
                         <div class="your-order">
                             <h3 style="font-family:Verdana">Đơn hàng</h3>
+
                             <div class="your-order-table table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th class="cart-product-name">Sản phẩm</th>
-                                            <th class="cart-product-total">Tổng</th>
+                                            <th class="cart-product-name"><strong>Sản phẩm</strong></th>
+                                            <th class="cart-product-total"><strong>Tổng</strong></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -126,7 +145,7 @@
                                                             × @item.amount
                                                         </strong>
                                                     </td>
-                                                    <td class="cart-product-total"><span class="amount">@item.TotalMoney.ToString("#,##0") đ</span></td>
+                                                    <td style="text-align:right" class="cart-product-total"><span class="amount">@item.TotalMoney.ToString("#,##0") đ</span></td>
                                                 </tr>
                                             }
                                         }
@@ -134,12 +153,46 @@
                                     </tbody>
                                     <tfoot>
                                         <tr class="cart-subtotal">
+                                            <th>Giảm giá</th>
+                                            <td style="text-align:right"><span class="amount">0 đ</span></td>
+                                        </tr>
+                                        <tr class="cart-subtotal">
                                             <th>Tạm tính</th>
-                                            <td><span class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0") đ</span></td>
+                                            <td style="text-align:right"><span class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0") đ</span></td>
+                                        </tr>
+                                        <tr class="cart-subtotal">
+                                            <th>Phí giao hàng</th>
+                                            <td style="text-align:right">
+                                                @if (Carts.Sum(x => x.TotalMoney) >= 999000)
+                                                {
+                                                    <span class="amount">
+                                                        0 đ
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="amount">
+                                                        50,000 đ
+                                                    </span>
+                                                }
+
+                                            </td>
                                         </tr>
                                         <tr class="order-total">
                                             <th>Tổng đơn hàng</th>
-                                            <td><strong><span class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0") đ</span></strong></td>
+                                            <td style="text-align:right">
+                                                <strong>
+                                                    @if (Carts.Sum(x => x.TotalMoney) >= 999000)
+                                                    {
+                                                        <span class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0") đ</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        int tong = @Carts.Sum(x => x.TotalMoney) + 50000;
+                                                        <span class="amount">@tong.ToString("#,##0") đ</span>
+                                                    }
+                                                </strong>
+                                            </td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -183,7 +236,7 @@
             $('select').niceSelect();
             //
             $(function () {
-                $("#TinhThanh").change(function(){
+                $("#TinhThanh").change(function () {
                     var tinhThanhId = $('#TinhThanh').val();
 
                     $.ajax({
@@ -198,24 +251,24 @@
                             $('#QuanHuyen').empty();
                             $('#PhuongXa').empty();
                             //
-                            var strPhuongXa='<option value="" disabled selected>Phường/Xã</option>';
+                            var strPhuongXa = '<option value="" disabled selected>Phường/Xã</option>';
                             $('#PhuongXa').append(strPhuongXa);
                             var strQuanHuyen = '<option value="" disabled selected>Quận/Huyện</option>';
                             $('#QuanHuyen').append(strQuanHuyen);
 
-                            $.each(QuanHuyens, function(i, item){
-                                var option = '<option value="'+ item.maqh +'">'+ item.name +'</option>';
+                            $.each(QuanHuyens, function (i, item) {
+                                var option = '<option value="' + item.maqh + '">' + item.name + '</option>';
                                 $('#QuanHuyen').append(option);
 
                             });
                             $('select').niceSelect('update');
                         },
                     });
-                }); 
+                });
 
-                
+
             });
-            $(function(){
+            $(function () {
                 $("#QuanHuyen").change(function () {
                     var quanHuyenId = $('#QuanHuyen').val();
 

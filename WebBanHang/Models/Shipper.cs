@@ -21,6 +21,7 @@ namespace WebBanHang.Models
         public string LoaiXe { get; set; }
         public string BienSo { get; set; }
         public string Salt { get; set; }
+        public bool? Khoa { get; set; }
 
         public virtual ICollection<DonHang> DonHangs { get; set; }
     }

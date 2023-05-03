@@ -88,6 +88,7 @@ namespace WebBanHang.Areas.Admin.Controllers
                 shipper.MatKhau = (shipper.MatKhau + salt.Trim()).ToMD5();
                 shipper.Salt = salt;
                 shipper.TenHt = shipper.TenShipper + " - " + shipper.Sdt;
+                shipper.Khoa = false;
 
                 _context.Add(shipper);
                 await _context.SaveChangesAsync();
