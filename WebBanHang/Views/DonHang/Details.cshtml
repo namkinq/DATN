@@ -94,13 +94,7 @@
         @*<p>Loại xe: @Model.DonHang.MaShipperNavigation.LoaiXe</p>
         <p>Biển số: @Model.DonHang.MaShipperNavigation.BienSo</p>*@
     }
-    @if (Model.DonHang.MaTt == 4)
-    {
-        <form asp-controller="DonHang" asp-action="DanhGia" method="post">
-            <input hidden id="id" name="id" value="@Model.DonHang.MaDh" type="text">
-            <button class="btn btn-secondary btn-primary-hover" type="submit">Đánh giá sản phẩm</button>
-        </form>
-    }
+    
     
 
     <br />
@@ -120,7 +114,7 @@
                         <td><a class="account-order-id" href="javascript:void(0)">#@item.MaSp</a></td>
                         <td>
                             @item.MaSpNavigation.TenSp
-                            @if(Model.DonHang.MaTt != 4)
+                            @if(Model.DonHang.MaTt == 4)
                             {
                                 <br />
                                 <button style="height:25px; font-size:12px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="mdo">Đánh giá</button>

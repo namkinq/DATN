@@ -1,7 +1,7 @@
 ﻿@model WebBanHang.Models.Shipper
 
 @{
-    ViewData["Title"] = "Xóa";
+    ViewData["Title"] = "Khóa";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -11,14 +11,14 @@
         <nav class="breadcrumb breadcrumb-dash">
             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
             <a asp-area="Admin" asp-controller="Shippers" asp-action="Index" class="breadcrumb-item">Shipper</a>
-            <span class="breadcrumb-item active">Xóa shipper</span>
+            <span class="breadcrumb-item active">Khóa shipper</span>
         </nav>
     </div>
 </div>
 
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title">Xóa shipper</h4>
+        <h4 class="card-title">Khóa shipper</h4>
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">ID</label>
             <div class="col-sm-2">
@@ -57,11 +57,11 @@
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Bạn có chắc muốn xóa?</label>
+            <label class="col-sm-2 col-form-label">Bạn có chắc muốn khóa?</label>
             <div class="col-sm-3">
                 <form asp-area="Admin" asp-action="Delete" asp-route-id="@Model.MaShipper">
                     <input type="hidden" asp-for="MaShipper" />
-                    <input type="submit" value="Xác nhận xóa" class="btn btn-danger" />
+                    <input type="submit" value="Xác nhận khóa" class="btn btn-danger" />
                 </form>
             </div>
         </div>

@@ -146,6 +146,14 @@ namespace WebBanHang.Controllers
                     .ToList();
                 ViewBag.SanPham = lsProduct;
 
+                var lsDG =_context.DanhGiaSanPhams
+                    .Include(x=>x.MaKhNavigation)
+                    .AsNoTracking()
+                    .Where(x=>x.MaSp==id)
+                    .OrderByDescending(x=>x.MaDg)
+                    .ToList();
+                ViewBag.DanhGia = lsDG;
+
                 return View(product);
             }
             catch

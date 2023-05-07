@@ -51,6 +51,7 @@
                         <th>Tên</th>
                         <th>Email</th>
                         <th>SĐT</th>
+                        <th>Trạng thái</th>
                         <th class="text-right">#</th>
                     </tr>
                 </thead>
@@ -72,9 +73,26 @@
                                 <td>
                                     @item.Sdt
                                 </td>
+                                <td>
+                                    @if (item.Khoa == false)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Hoạt động</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+                                            <div>Khóa</div>
+                                        </div>
+                                    }
+
+                                </td>
                                 <td class="text-right">
                                     <a class="btn btn-icon btn-hover btn-sm btn-rounded pull-right" asp-area="Admin" asp-controller="Shippers" asp-action="Delete" asp-route-id="@item.MaShipper">
-                                        <i class="anticon anticon-delete"></i>
+                                        <i class="anticon anticon-lock"></i>
                                     </a>
 
                                     <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-area="Admin" asp-controller="Shippers" asp-action="Edit" asp-route-id="@item.MaShipper">

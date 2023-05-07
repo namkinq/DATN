@@ -4,6 +4,7 @@
     ViewData["Title"] = Model.TenSp;
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<SanPham> lsSP = ViewBag.SanPham;
+    List<DanhGiaSanPham> lsDG = ViewBag.DanhGia;
 }
 
 
@@ -85,10 +86,21 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3 add-to-cart">
-                                        <a class="btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0" href="javascript:void(0)">Thêm vào giỏ</a>
-                                        <input hidden asp-for="MaSp" />
-                                    </div>
+                                    @if (Model.SoLuongCo > 0)
+                                    {
+                                        <div class="col-sm-3 add-to-cart">
+                                            <a class="btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0" href="javascript:void(0)">Thêm vào giỏ</a>
+                                            <input hidden asp-for="MaSp" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-sm-3">
+                                            <a class="btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0" href="javascript:void(0)">HẾT HÀNG</a>
+                                            <input hidden asp-for="MaSp" />
+                                        </div>
+                                    }
+
                                 </div>
                                 @*<ul class="quantity-with-btn pb-7">
                                 <li class="quantity">
@@ -139,16 +151,6 @@
                                 Mô tả
                             </a>
                         </li>
-                        @*<li class="nav-item" role="presentation">
-                        <a class="btn btn-custom-size" id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">
-                        Reviews
-                        </a>
-                        </li>*@
-                        @*<li class="nav-item" role="presentation">
-                        <a class="btn btn-custom-size" id="shipping-tab" data-bs-toggle="tab" href="#shipping" role="tab" aria-controls="shipping" aria-selected="false">
-                        Shipping
-                        </a>
-                        </li>*@
                     </ul>
                     <div class="tab-content product-tab-content">
                         <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
@@ -156,154 +158,119 @@
                                 <span style="white-space: pre-line">@Model.MoTa</span>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="product-tab-area section-space-top-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="nav product-tab-nav product-tab-style-2" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class=" active btn btn-custom-size" id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="true">
+                                Đánh giá
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content product-tab-content">
+                        <div class="tab-pane fade show active" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
                             <div class="product-review-body">
-                                <h4 class="heading mb-5">3 Review Items</h4>
                                 <ul class="user-info-wrap">
-                                    <li>
-                                        <ul class="user-info">
-                                            <li class="user-avatar">
-                                                <img src="~/assets/images/testimonial/user/1.png" alt="User Image">
+                                    @if (lsDG.Count != 0)
+                                    {
+                                        foreach (var item in lsDG)
+                                        {
+                                            <li>
+                                                <ul class="user-info">
+                                                    <li class="user-comment">
+                                                        <div class="rating-box">
+                                                            @if(item.Diem ==0){
+                                                                <ul>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                </ul>
+                                                            }
+                                                            else if (item.Diem == 1)
+                                                            {
+                                                                <ul>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                </ul>
+                                                            }
+                                                            else if (item.Diem == 2)
+                                                            {
+                                                                <ul>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                </ul>
+                                                            }
+                                                            else if (item.Diem == 3)
+                                                            {
+                                                                <ul>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                </ul>
+                                                            }
+                                                            else if (item.Diem == 4)
+                                                            {
+                                                                <ul>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-star-o"></i></li>
+                                                                </ul>
+                                                            }
+                                                            else
+                                                            {
+                                                                <ul>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                    <li><i class="fa fa-solid fa-star"></i></li>
+                                                                </ul>
+                                                            }
+
+                                                        </div>
+                                                        <div class="meta">
+                                                            <span><strong>@item.MaKhNavigation.TenKh -</strong> @item.ThoiGian</span>
+                                                        </div>
+                                                        <p class="short-desc mb-0">
+                                                            “@item.NoiDung“
+                                                        </p>
+                                                    </li>
+                                                </ul>
                                             </li>
-                                            <li class="user-comment">
-                                                <div class="rating-box">
-                                                    <ul>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="meta">
-                                                    <span><strong>Oscar -</strong> March 15, 2021</span>
-                                                </div>
-                                                <p class="short-desc mb-0">
-                                                    “Sed ligula sapien, fermentum id est eget,
-                                                    viverra auctor sem. Vivamus maximus enim vitae urna porta, ut
-                                                    euismod nibh lacinia ellentesque at diam voluptas quas nisi, culpa
-                                                    in accusantium“
-                                                </p>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <ul class="user-info">
-                                            <li class="user-avatar">
-                                                <img src="~/assets/images/testimonial/user/1.png" alt="User Image">
-                                            </li>
-                                            <li class="user-comment">
-                                                <div class="rating-box">
-                                                    <ul>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="meta">
-                                                    <span><strong>Oscar -</strong> March 15, 2021</span>
-                                                </div>
-                                                <p class="short-desc mb-0">
-                                                    “Sed ligula sapien, fermentum id est eget,
-                                                    viverra auctor sem. Vivamus maximus enim vitae urna porta, ut
-                                                    euismod nibh lacinia ellentesque at diam voluptas quas nisi, culpa
-                                                    in accusantium“
-                                                </p>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <ul class="user-info">
-                                            <li class="user-avatar">
-                                                <img src="~/assets/images/testimonial/user/1.png" alt="User Image">
-                                            </li>
-                                            <li class="user-comment">
-                                                <div class="rating-box">
-                                                    <ul>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                        <li><i class="pe-7s-star"></i></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="meta">
-                                                    <span><strong>Oscar -</strong> March 15, 2021</span>
-                                                </div>
-                                                <p class="short-desc mb-0">
-                                                    “Sed ligula sapien, fermentum id est eget,
-                                                    viverra auctor sem. Vivamus maximus enim vitae urna porta, ut
-                                                    euismod nibh lacinia ellentesque at diam voluptas quas nisi, culpa
-                                                    in accusantium“
-                                                </p>
-                                            </li>
-                                        </ul>
-                                    </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>Chưa có đánh giá</p>
+                                    }
+
                                 </ul>
-                                <div class="feedback-area pt-5">
-                                    <h2 class="heading mb-1">Add a review</h2>
-                                    <p class="short-desc mb-3">Your email address will not be published.</p>
-                                    <div class="rating-box">
-                                        <span>Your rating</span>
-                                        <ul class="ps-4">
-                                            <li><i class="pe-7s-star"></i></li>
-                                            <li><i class="pe-7s-star"></i></li>
-                                            <li><i class="pe-7s-star"></i></li>
-                                            <li><i class="pe-7s-star"></i></li>
-                                            <li><i class="pe-7s-star"></i></li>
-                                        </ul>
-                                    </div>
-                                    <form class="feedback-form pt-8" action="#">
-                                        <div class="group-input">
-                                            <div class="form-field me-md-6 mb-6 mb-md-0">
-                                                <input type="text" name="name" placeholder="Your Name*" class="input-field">
-                                            </div>
-                                            <div class="form-field me-md-6 mb-6 mb-md-0">
-                                                <input type="text" name="email" placeholder="Your Email*" class="input-field">
-                                            </div>
-                                            <div class="form-field">
-                                                <input type="text" name="number" placeholder="Phone number" class="input-field">
-                                            </div>
-                                        </div>
-                                        <div class="form-field mt-6">
-                                            <textarea name="message" placeholder="Message" class="textarea-field"></textarea>
-                                        </div>
-                                        <div class="button-wrap mt-8">
-                                            <button type="submit" value="submit" class="btn btn-custom-size lg-size btn-secondary btn-primary-hover btn-lg rounded-0" name="submit">Submit</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
-                            <div class="product-shipping-body">
-                                <h4 class="title">Shipping</h4>
-                                <p class="short-desc mb-4">
-                                    The item will be shipped from China. So it need 15-20 days to
-                                    deliver. Our product is good with reasonable price and we believe you will worth it.
-                                    So please wait for it patiently! Thanks.Any question please kindly to contact us and
-                                    we promise to work hard to help you to solve the problem
-                                </p>
-                                <h4 class="title">About return request</h4>
-                                <p class="short-desc mb-4">
-                                    If you don't need the item with worry, you can contact us
-                                    then we will help you to solve the problem, so please close the return request!
-                                    Thanks
-                                </p>
-                                <h4 class="title">Guarantee</h4>
-                                <p class="short-desc mb-0">
-                                    If it is the quality question, we will resend or refund to
-                                    you; If you receive damaged or wrong items, please contact us and attach some
-                                    pictures about product, we will exchange a new correct item to you after the
-                                    confirmation.
-                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
     <div class="product-slider-area section-space-top-95 section-space-bottom-100">
@@ -338,8 +305,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="product-content texx">
-                                                    <a class="product-name" href="single-product.html">@item.TenSp</a>
+                                                    <a style="display: block; height:72px" class="product-name" href="single-product.html">@item.TenSp</a>
                                                     <div class="price-box pb-1">
+                                                        <span class="old-price text-dark">@item.GiaBan.Value.ToString("#,##0") đ</span>
                                                         <span class="new-price text-danger">@item.GiaGiam.Value.ToString("#,##0") đ</span>
                                                     </div>
                                                 </div>

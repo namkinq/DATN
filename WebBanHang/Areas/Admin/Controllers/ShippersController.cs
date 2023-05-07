@@ -178,14 +178,16 @@ namespace WebBanHang.Areas.Admin.Controllers
             try
             {
                 var shipper = await _context.Shippers.FindAsync(id);
-                _context.Shippers.Remove(shipper);
+
+                shipper.Khoa = true;
+                _context.Update(shipper);
                 await _context.SaveChangesAsync();
-                _notyfService.Success("Xóa thành công");
+                _notyfService.Success("Khóa thành công");
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                _notyfService.Warning("Xóa thất bại");
+                _notyfService.Warning("Khóa thất bại");
                 return RedirectToAction(nameof(Index));
             }
             

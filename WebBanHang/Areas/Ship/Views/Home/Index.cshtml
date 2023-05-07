@@ -28,12 +28,12 @@
                             <option value="0">Tất cả</option>
                         </select>
                     </div>
-                    <div class="m-b-10 ">
+                    @*<div class="m-b-10 ">
                         <div class="input-affix" style="min-width: 200px;">
                             <i class="prefix-icon anticon anticon-search opacity-04"></i>
                             <input id="searchKey" name="searchKey" type="text" class="form-control" placeholder="Tìm">
                         </div>
-                    </div>
+                    </div>*@
 
                 </div>
             </div>
@@ -116,26 +116,26 @@
                 });
             });
 
-            $("#searchKey").keyup(function () {
-                var strSearchKey = $("#searchKey").val();
-                $.ajax({
-                    url: '/Admin/Search/TimSanPham/',
-                    datatype: "json",
-                    type: "POST",
-                    data: {
-                        searchKey: strSearchKey
-                    },
-                    async: true,
-                    success: function (results) {
-                        //$('#loader').hide();
-                        $('#records_table').html("");
-                        $('#records_table').html(results);
-                    },
-                    error: function (xhr) {
-                        alert('error');
-                    }
-                });
-            });
+            //$("#searchKey").keyup(function () {
+            //    var strSearchKey = $("#searchKey").val();
+            //    $.ajax({
+            //        url: '/Admin/Search/TimSanPham/',
+            //        datatype: "json",
+            //        type: "POST",
+            //        data: {
+            //            searchKey: strSearchKey
+            //        },
+            //        async: true,
+            //        success: function (results) {
+            //            //$('#loader').hide();
+            //            $('#records_table').html("");
+            //            $('#records_table').html(results);
+            //        },
+            //        error: function (xhr) {
+            //            alert('error');
+            //        }
+            //    });
+            //});
         });
     </script>
 }
