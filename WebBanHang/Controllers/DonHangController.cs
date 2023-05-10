@@ -25,6 +25,29 @@ namespace WebBanHang.Controllers
             return View();
         }
 
+        public string getLocation(string maxa, string maqh, string matp)
+        {
+            try
+            {
+                var xa = _context.XaPhuongThiTrans.AsNoTracking()
+                    .SingleOrDefault(x => x.Maxa == maxa);
+                var qh = _context.QuanHuyens.AsNoTracking()
+                    .SingleOrDefault(x => x.Maqh == maqh);
+                var tp = _context.TinhThanhPhos.AsNoTracking()
+                    .SingleOrDefault(x => x.Matp == matp);
+
+                if (xa != null && qh != null && tp != null)
+                {
+                    return $"{xa.Name}, {qh.Name}, {tp.Name}";
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+            return string.Empty;
+        }
+
         [HttpPost]
         public async Task<IActionResult> Details(int? id)
         {
@@ -47,7 +70,9 @@ namespace WebBanHang.Controllers
                 }
                 var donhang = await _context.DonHangs
                     .Include(x=>x.MaTtNavigation)
+                    .Include(x=>x.MaKhNavigation)
                     .Include(x=>x.MaShipperNavigation)
+                    .Include(x=>x.DanhGiaSanPhams)
                     .FirstOrDefaultAsync(m => m.MaDh == id && Convert.ToInt32(taikhoanID) == m.MaKh);
                 if(donhang == null)
                 {
@@ -64,6 +89,9 @@ namespace WebBanHang.Controllers
                 XemDonHang donHang = new XemDonHang();
                 donHang.DonHang = donhang;
                 donHang.ChiTietDonHang = ctdh;
+
+                string fullAddress = $"{donhang.DiaChi}, {getLocation(donhang.Maxa, donhang.Maqh, donhang.Matp)}";
+                ViewBag.FullAddress = fullAddress;
 
                 return PartialView("Details", donHang);
             }
@@ -123,51 +151,55 @@ namespace WebBanHang.Controllers
 
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> DanhGia(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    try
-        //    {
-        //        var taikhoanID = HttpContext.Session.GetString("CustomerId");
-        //        if (string.IsNullOrEmpty(taikhoanID))
-        //        {
-        //            return RedirectToAction("Login", "Accounts");
-        //        }
-        //        var khachhang = _context.KhachHangs.AsNoTracking()
-        //            .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
-        //        if (khachhang == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        var donhang = await _context.DonHangs
-        //            .FirstOrDefaultAsync(m => m.MaDh == id && Convert.ToInt32(taikhoanID) == m.MaKh);
-        //        if (donhang == null)
-        //        {
-        //            return NotFound();
-        //        }
+        [HttpPost]
+        public async Task<IActionResult> DanhGia(int? madh, int masp, byte diem, string noiDung)
+        {
+            if (madh == null)
+            {
+                return RedirectToAction("Dashboard", "Accounts");
+            }
+            try
+            {
+                var taikhoanID = HttpContext.Session.GetString("CustomerId");
+                if (string.IsNullOrEmpty(taikhoanID))
+                {
+                    return RedirectToAction("DangNhap", "Accounts");
+                }
+                var khachhang = _context.KhachHangs.AsNoTracking()
+                    .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
+                if (khachhang == null)
+                {
+                    return NotFound();
+                }
+                //
+                var donhang = await _context.DonHangs
+                    .FirstOrDefaultAsync(m => m.MaDh == madh && Convert.ToInt32(taikhoanID) == m.MaKh);
+                if (donhang == null)
+                {
+                    return RedirectToAction("Dashboard", "Accounts");
+                }
+                //
+                DanhGiaSanPham dgsp = new DanhGiaSanPham();
+                dgsp.MaKh = khachhang.MaKh;
+                dgsp.MaDh = donhang.MaDh;
+                dgsp.MaSp = masp;
+                dgsp.Diem = diem;
+                dgsp.NoiDung = noiDung;
+                dgsp.ThoiGian = DateTime.Now;
 
-        //        var ctdh = _context.ChiTietDonHangs
-        //            .AsNoTracking()
-        //            .Where(x => x.MaDh == id)
-        //            .Include(x => x.MaSpNavigation)
-        //            .OrderBy(x => x.MaSp)
-        //            .ToList();
+                _context.Add(dgsp);
+                _context.SaveChanges();
 
-        //        XemDonHang donHang = new XemDonHang();
-        //        donHang.DonHang = donhang;
-        //        donHang.ChiTietDonHang = ctdh;
+                _notyfService.Success("Đánh giá thành công");
 
-        //        return PartialView("Details", donHang);
-        //    }
-        //    catch
-        //    {
-        //        return NotFound();
-        //    }
+                return RedirectToAction("Dashboard", "Accounts");
 
-        //}
+            }
+            catch
+            {
+                return RedirectToAction("Dashboard", "Accounts");
+            }
+
+        }
     }
 }

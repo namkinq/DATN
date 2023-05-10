@@ -75,11 +75,12 @@
 
 @if (Model.ChiTietDonHang != null)
 {
-    <h5 style="font-family:Verdana">Đơn hàng #@Model.DonHang.MaDh</h5>
+    <h5 style="font-family:Verdana">Đơn hàng #@Model.DonHang.MaDh - @Model.DonHang.MaTtNavigation.TenTt</h5>
     <br />
-    <p>Tổng tiền: @Model.DonHang.TongTien.Value.ToString("#,##0") đ</p>
+    <p>Người nhận: @Model.DonHang.MaKhNavigation.TenKh - @Model.DonHang.MaKhNavigation.Sdt</p>
+    <p>Địa chỉ: @ViewBag.FullAddress</p>
+    <p>Tổng tiền: <span style="font-weight:bold">@Model.DonHang.TongTien.Value.ToString("#,##0") đ</span> </p>
 
-    <p>Trạng thái: @Model.DonHang.MaTtNavigation.TenTt</p>
 
     @if (Model.DonHang.MaTt == 1)
     {
@@ -94,8 +95,8 @@
         @*<p>Loại xe: @Model.DonHang.MaShipperNavigation.LoaiXe</p>
         <p>Biển số: @Model.DonHang.MaShipperNavigation.BienSo</p>*@
     }
-    
-    
+
+
 
     <br />
     <div class="table-responsive">
@@ -114,12 +115,89 @@
                         <td><a class="account-order-id" href="javascript:void(0)">#@item.MaSp</a></td>
                         <td>
                             @item.MaSpNavigation.TenSp
-                            @if(Model.DonHang.MaTt == 4)
+                            @if (Model.DonHang.MaTt == 4)
                             {
-                                <br />
-                                <button style="height:25px; font-size:12px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="mdo">Đánh giá</button>
+                                int dg = 0;
+                                foreach (var item2 in Model.DonHang.DanhGiaSanPhams)
+                                {
+                                    if (item2.MaSp == item.MaSp)
+                                    {
+                                        dg = 1;
+                                        break;
+                                    }
+                                }
+                                if (dg == 1)
+                                {
+                                    <br />
+                                    <button disabled style="height:25px; font-size:12px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="mdo">Đã đánh giá</button>
+                                }
+                                else
+                                {
+                                    <br />
+                                    <button style="height:25px; font-size:12px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="mdo">Đánh giá</button>
+
+                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 style="font-family:Verdana" class="modal-title" id="exampleModalLabel">Đánh giá sản phẩm</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="danhgia" method="post" asp-controller="DonHang" asp-action="DanhGia">
+                                                        <input hidden id="madh" name="madh" value="@Model.DonHang.MaDh" type="text">
+                                                        <input hidden id="masp" name="masp" value="@item.MaSp" type="text">
+                                                        <div>
+                                                            <label for="recipient-name" class="col-form-label">Đánh giá</label>
+                                                        </div>
+                                                        <div class="rating">
+                                                            <label>
+                                                                <input type="radio" name="diem" value="1" />
+                                                                <span class="icon">★</span>
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="diem" value="2" />
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="diem" value="3" />
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="diem" value="4" />
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="diem" value="5" checked />
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                                <span class="icon">★</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="noiDung" class="col-form-label">Bình luận</label>
+                                                            <textarea required rows="5" class="form-control" id="noiDung" name="noiDung"></textarea>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button form="danhgia" type="submit" class="btn btn-primary">Viết đánh giá</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
                             }
-                            
+
                         </td>
                         <td>@item.SoLuong</td>
                         <td>
@@ -133,61 +211,9 @@
             </tbody>
         </table>
     </div>
+    <br />
+    <br />
+    <hr />
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 style="font-family:Verdana" class="modal-title" id="exampleModalLabel">Đánh giá sản phẩm</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div>
-                            <label for="recipient-name" class="col-form-label">Đánh giá</label>
-                        </div>
-                        <div class="rating">
-                            <label>
-                                <input type="radio" name="stars" value="1" />
-                                <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="2" />
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="3" />
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="4" />
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="5" />
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message-text" class="col-form-label">Bình luận</label>
-                            <textarea rows="5" class="form-control" id="message-text"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Viết đánh giá</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 }

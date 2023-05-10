@@ -188,7 +188,12 @@ namespace WebBanHang.Controllers
 
                     var khachhang = _context.KhachHangs.AsNoTracking()
                         .SingleOrDefault(x => x.Email.Trim() == customer.UserName);
-                    if (khachhang == null) return RedirectToAction("DangKyTaiKhoan");
+                    if (khachhang == null)
+                    {
+                        _notyfService.Warning("Thông tin đăng nhập không chính xác");
+                        return View(customer);
+                    }
+                        
 
                     string pass = (customer.Password + khachhang.Salt.Trim()).ToMD5();
                     if (khachhang.MatKhau != pass)
