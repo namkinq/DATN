@@ -76,6 +76,8 @@ namespace WebBanHang.Models
 
                 entity.Property(e => e.MaDg).HasColumnName("MaDG");
 
+                entity.Property(e => e.MaDh).HasColumnName("MaDH");
+
                 entity.Property(e => e.MaKh).HasColumnName("MaKH");
 
                 entity.Property(e => e.MaSp).HasColumnName("MaSP");
@@ -83,6 +85,11 @@ namespace WebBanHang.Models
                 entity.Property(e => e.NoiDung).HasMaxLength(500);
 
                 entity.Property(e => e.ThoiGian).HasColumnType("datetime");
+
+                entity.HasOne(d => d.MaDhNavigation)
+                    .WithMany(p => p.DanhGiaSanPhams)
+                    .HasForeignKey(d => d.MaDh)
+                    .HasConstraintName("FK_DanhGiaSanPham_DonHang");
 
                 entity.HasOne(d => d.MaKhNavigation)
                     .WithMany(p => p.DanhGiaSanPhams)

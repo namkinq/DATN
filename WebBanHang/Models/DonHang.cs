@@ -10,6 +10,7 @@ namespace WebBanHang.Models
         public DonHang()
         {
             ChiTietDonHangs = new HashSet<ChiTietDonHang>();
+            DanhGiaSanPhams = new HashSet<DanhGiaSanPham>();
         }
 
         public int MaDh { get; set; }
@@ -33,5 +34,6 @@ namespace WebBanHang.Models
         public virtual Shipper MaShipperNavigation { get; set; }
         public virtual TrangThaiDonHang MaTtNavigation { get; set; }
         public virtual ICollection<ChiTietDonHang> ChiTietDonHangs { get; set; }
+        public virtual ICollection<DanhGiaSanPham> DanhGiaSanPhams { get; set; }
     }
 }
