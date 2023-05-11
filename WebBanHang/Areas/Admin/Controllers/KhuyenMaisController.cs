@@ -67,6 +67,7 @@ namespace WebBanHang.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                khuyenMai.Ma = khuyenMai.Ma.ToUpper();
                 _context.Add(khuyenMai);
                 await _context.SaveChangesAsync();
                 _notyfService.Success("Tạo mới thành công");

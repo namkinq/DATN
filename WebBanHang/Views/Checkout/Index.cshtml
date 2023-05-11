@@ -39,14 +39,14 @@
             <div class="row">
                 <div class="col-12">
                     <div class="coupon-accordion">
-                        
-                        <h3 style="font-family:Verdana">Bạn có mã giảm giá? <span id="showcoupon">Nhập mã tại đây</span></h3>
+
+                        <h3 style="font-family:Verdana">Bạn có mã giảm giá? <span id="showcoupon">Nhập mã <u>tại đây</u> </span></h3>
                         <div id="checkout_coupon" class="coupon-checkout-content">
                             <div class="coupon-info">
-                                <form action="javascript:void(0)">
+                                <form action="javascript:void(0)" method="post">
                                     <p class="checkout-coupon">
-                                        <input placeholder="CODE" type="text">
-                                        <input class="coupon-inner_btn" value="Áp dụng" type="submit">
+                                        <input id="macode" placeholder="CODE" type="text">
+                                        <input id="checkGG" class="coupon-inner_btn" value="Áp dụng" type="submit">
                                     </p>
                                 </form>
                             </div>
@@ -125,7 +125,7 @@
                     <div class="col-lg-6 col-12">
                         <div class="your-order">
                             <h3 style="font-family:Verdana">Đơn hàng</h3>
-
+                            @*sản phẩm*@
                             <div class="your-order-table table-responsive">
                                 <table class="table">
                                     <thead>
@@ -149,28 +149,38 @@
                                                 </tr>
                                             }
                                         }
-
                                     </tbody>
+                                </table>
+                            </div>
+                            @*tổng tiền*@
+                            <div class="your-order-table table-responsive">
+                                <table>
                                     <tfoot>
                                         <tr class="cart-subtotal">
-                                            <th>Giảm giá</th>
-                                            <td style="text-align:right"><span class="amount">0 đ</span></td>
+                                            <td>Tạm tính</td>
+                                            <td style="text-align:right"><span id="soTienTamTinh" class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0")</span><span>&nbsp;đ</span></td>
+                                            @*input để truyền MGG*@
+                                            <input hidden id="tongtien" value="@Carts.Sum(x=>x.TotalMoney)" />
                                         </tr>
                                         <tr class="cart-subtotal">
-                                            <th>Tạm tính</th>
-                                            <td style="text-align:right"><span class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0") đ</span></td>
+                                            <td>Giảm giá</td>
+                                            <td style="text-align:right"><span id="soTienGiam" class="amount">0</span><span> đ</span></td>
+                                            <input hidden id="soTienGiamInput" name="soTienGiamInput" value="0" />
                                         </tr>
+                                        
                                         <tr class="cart-subtotal">
-                                            <th>Phí giao hàng</th>
+                                            <td>Phí giao hàng</td>
                                             <td style="text-align:right">
                                                 @if (Carts.Sum(x => x.TotalMoney) >= 999000)
                                                 {
+                                                    <input id="phiGiaoHangInput" name="phiGiaoHangInput" hidden value="0">
                                                     <span class="amount">
                                                         0 đ
                                                     </span>
                                                 }
                                                 else
                                                 {
+                                                    <input id="phiGiaoHangInput" name="phiGiaoHangInput" hidden value="50000">
                                                     <span class="amount">
                                                         50,000 đ
                                                     </span>
@@ -178,21 +188,19 @@
 
                                             </td>
                                         </tr>
-                                        <tr class="order-total">
+                                        <tr>
                                             <th>Tổng đơn hàng</th>
-                                            <td style="text-align:right">
-                                                <strong>
-                                                    @if (Carts.Sum(x => x.TotalMoney) >= 999000)
-                                                    {
-                                                        <span class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0") đ</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        int tong = @Carts.Sum(x => x.TotalMoney) + 50000;
-                                                        <span class="amount">@tong.ToString("#,##0") đ</span>
-                                                    }
-                                                </strong>
-                                            </td>
+                                            <th style="text-align:right">
+                                                @if (Carts.Sum(x => x.TotalMoney) >= 999000)
+                                                {
+                                                    <span id="tongDonHang" class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0")</span><span>&nbsp;đ</span>
+                                                }
+                                                else
+                                                {
+                                                    int tong = @Carts.Sum(x => x.TotalMoney) + 50000;
+                                                    <span id="tongDonHang" class="amount">@tong.ToString("#,##0")</span><span>&nbsp;đ</span>
+                                                }
+                                            </th>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -201,17 +209,17 @@
                                 <div class="payment-accordion">
                                     <div id="accordion">
                                         <div class="card">
-                                            <div class="card-header" id="#payment-1">
-                                                <h5 class="panel-title">
-                                                    <a href="javascript:void(0)" class="" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true">
-                                                        Thanh toán khi nhận hàng
-                                                    </a>
-                                                </h5>
-                                            </div>
+                                            @*<div class="card-header" id="#payment-1">
+                                            <h5 class="panel-title">
+                                            <a href="javascript:void(0)" class="" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true">
+                                            Thanh toán khi nhận hàng
+                                            </a>
+                                            </h5>
+                                            </div>*@
                                             <div id="collapseOne" class="collapse show" data-bs-parent="#accordion">
                                                 <div class="card-body">
                                                     <p>
-                                                        Khách hàng thanh toán khi nhận hàng
+                                                        Vui lòng thanh toán khi nhận hàng!
                                                     </p>
                                                 </div>
                                             </div>
@@ -234,6 +242,7 @@
     <script>
         $(document).ready(function () {
             $('select').niceSelect();
+            
             //
             $(function () {
                 $("#TinhThanh").change(function () {
@@ -296,6 +305,60 @@
                     });
                 });
             });
+            // nhập mã gg
+            $("#checkGG").click(function (e) {
+                e.preventDefault();
+                //
+                var tongTienSanPham = @Carts.Sum(x=>x.TotalMoney);
+                //
+                $.ajax({
+                    type: "POST",
+                    url: "/Checkout/CheckMaGG/",
+                    data: {
+                        MaCode: $("#macode").val(),
+                        TongTien: $("#tongtien").val()
+                    },
+                    success: function (result) {
+                        if (result.success ==true){
+                            var hienthi = (result.tienGiam).toLocaleString('en-US')
+                            $("#soTienGiam").html("");
+                            $("#soTienGiam").html(hienthi);
+                            $("#soTienGiamInput").val(result.tienGiam).trigger('change');
+                            console.log($("#soTienGiamInput").val());
+                            //
+                            var tongDonHang
+                            if (tongTienSanPham >= 999000){
+                                tongDonHang = (tongTienSanPham - result.tienGiam).toLocaleString('en-US')
+                            }
+                            else{
+                                tongDonHang = (tongTienSanPham + 50000 - result.tienGiam).toLocaleString('en-US')
+                            }
+                            $("#tongDonHang").html(tongDonHang);
+                            
+                        }
+                        else{
+                            alert(result.error);
+                            $("#soTienGiam").html("");
+                            $("#soTienGiam").html(0);
+                            $("#soTienGiamInput").val(0).change();
+                            //
+                            var tongDonHang
+                            if (tongTienSanPham >= 999000) {
+                                tongDonHang = (tongTienSanPham).toLocaleString('en-US')
+                            }
+                            else {
+                                tongDonHang = (tongTienSanPham + 50000).toLocaleString('en-US')
+                            }
+                            $("#tongDonHang").html(tongDonHang);
+                        } 
+                    },
+                    error: function (result) {
+                        alert('Lỗi');
+                    }
+                });
+            });
+            // bắt sự kiện thay đổi
+            
         });
     </script>
 }

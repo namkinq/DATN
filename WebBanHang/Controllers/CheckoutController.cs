@@ -81,13 +81,13 @@ namespace WebBanHang.Controllers
                     }
                     else
                     {
-                        ViewData["lsQuanHuyen"] = new SelectList(_context.QuanHuyens.Where(x=>x.Matp==khachhang.Matp).OrderBy(x => x.Maqh).ToList(), "Maqh", "Name");
+                        ViewData["lsQuanHuyen"] = new SelectList(_context.QuanHuyens.Where(x => x.Matp == khachhang.Matp).OrderBy(x => x.Maqh).ToList(), "Maqh", "Name");
                     }
                 }
                 else
                 {
                     ViewData["lsTinhThanh"] = new SelectList(_context.TinhThanhPhos.OrderBy(x => x.Matp).ToList(), "Matp", "Name");
-                } 
+                }
             }
 
 
@@ -97,7 +97,7 @@ namespace WebBanHang.Controllers
 
         [HttpPost]
         [Route("checkout")]
-        public IActionResult Index(MuaHangVM muahang)
+        public IActionResult Index(MuaHangVM muahang, int soTienGiamInput, int phiGiaoHangInput)
         {
             //lấy giỏ
             var cart = HttpContext.Session.Get<List<CartItem>>("GioHang");
@@ -145,7 +145,11 @@ namespace WebBanHang.Controllers
                     donhang.NgayDat = DateTime.Now;
                     donhang.MaTt = 1;
 
-                    donhang.TongTien = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
+                    donhang.TienShip = 50000;
+                    donhang.GiamGiaShip = donhang.TienShip - phiGiaoHangInput;
+                    donhang.GiamGia = soTienGiamInput;
+
+                    donhang.TongTien = Convert.ToInt32(cart.Sum(x => x.TotalMoney)) + donhang.TienShip - donhang.GiamGiaShip - donhang.GiamGia;
 
                     _context.Add(donhang);
                     _context.SaveChanges();
@@ -214,5 +218,45 @@ namespace WebBanHang.Controllers
 
         //    }
         //}
+
+        public IActionResult CheckMaGG(string MaCode, int TongTien)
+        {
+            var taikhoanID = HttpContext.Session.GetString("CustomerId");
+            if (string.IsNullOrEmpty(taikhoanID))
+            {
+                return RedirectToAction("DangNhap", "Accounts");
+            }
+
+            if (taikhoanID != null)
+            {
+                try
+                {
+                    var ma = _context.KhuyenMais.AsNoTracking()
+                    .SingleOrDefault(x => x.Ma.ToLower() == MaCode.ToLower());
+                    if (ma != null)
+                    {
+                        if (TongTien >= ma.GttoiThieu)
+                        {
+                            var tienGiam = ma.Gtgiam;
+                            return Json(new { success = true, tienGiam });
+                        }
+                        else
+                        {
+                            return Json(new { success = false, error = "Chưa đạt giá trị tối thiểu" });
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { success = false, error = "Mã giảm giá không tồn tại" });
+                    }
+                }
+                catch
+                {
+                    return Json(new { success = false, error = "Vui lòng nhập mã" });
+
+                }
+            }
+            return Json(new { success = false, error="Lỗi" });
+        }
     }
 }
