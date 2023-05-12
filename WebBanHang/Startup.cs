@@ -15,6 +15,7 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Threading.Tasks;
 using WebBanHang.Models;
+using WebBanHang.Services;
 
 namespace WebBanHang
 {
@@ -41,6 +42,8 @@ namespace WebBanHang
             //{
             //    options.IdleTimeout= TimeSpan.FromDays(2);
             //});
+            //vnp
+            services.AddScoped<IVnPayService, VnPayService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(p =>

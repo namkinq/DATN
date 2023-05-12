@@ -15,8 +15,8 @@
     }
 
     .nice-select .option:hover, .nice-select .option.focus, .nice-select .option.selected.focus {
-        color: red;
-        background: none;
+        color: #4099a1;
+        background: #dfdfdf;
     }
 </style>
 
@@ -167,7 +167,7 @@
                                             <td style="text-align:right"><span id="soTienGiam" class="amount">0</span><span> đ</span></td>
                                             <input hidden id="soTienGiamInput" name="soTienGiamInput" value="0" />
                                         </tr>
-                                        
+
                                         <tr class="cart-subtotal">
                                             <td>Phí giao hàng</td>
                                             <td style="text-align:right">
@@ -193,12 +193,17 @@
                                             <th style="text-align:right">
                                                 @if (Carts.Sum(x => x.TotalMoney) >= 999000)
                                                 {
-                                                    <span id="tongDonHang" class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0")</span><span>&nbsp;đ</span>
+                                                    <span id="tongDonHang" class="amount">@Carts.Sum(x=>x.TotalMoney).ToString("#,##0")</span>
+                                                    <span>&nbsp;đ</span>
+                                                    <input id="tongDonHangInput" name="tongDonHangInput" hidden value="@Carts.Sum(x=>x.TotalMoney)">
                                                 }
                                                 else
                                                 {
                                                     int tong = @Carts.Sum(x => x.TotalMoney) + 50000;
-                                                    <span id="tongDonHang" class="amount">@tong.ToString("#,##0")</span><span>&nbsp;đ</span>
+                                                    <span id="tongDonHang" class="amount">@tong.ToString("#,##0")</span>
+                                                    <span>&nbsp;đ</span>
+                                                    <input id="tongDonHangInput" name="tongDonHangInput" hidden value="@tong">
+
                                                 }
                                             </th>
                                         </tr>
@@ -206,27 +211,19 @@
                                 </table>
                             </div>
                             <div class="payment-method">
-                                <div class="payment-accordion">
-                                    <div id="accordion">
-                                        <div class="card">
-                                            @*<div class="card-header" id="#payment-1">
-                                            <h5 class="panel-title">
-                                            <a href="javascript:void(0)" class="" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true">
-                                            Thanh toán khi nhận hàng
-                                            </a>
-                                            </h5>
-                                            </div>*@
-                                            <div id="collapseOne" class="collapse show" data-bs-parent="#accordion">
-                                                <div class="card-body">
-                                                    <p>
-                                                        Vui lòng thanh toán khi nhận hàng!
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="payment-accordion" style="text-align:center">
+                                    <div>
+                                        <input style="width:400px; height:50px" class="btn btn-secondary btn-primary-hover" value="Thanh toán khi nhận hàng" type="submit">
                                     </div>
-                                    <div class="order-button-payment">
-                                        <input value="Xác nhận đặt hàng" type="submit">
+                                    <p style="margin: 10px auto; width: 50%;text-align:center; justify-content: center">
+                                        hoặc
+                                    </p>
+                                    <div>
+                                        <button style="width:400px; height:50px" class="btn btn-secondary btn-primary-hover" formaction="/Checkout/CreatePaymentUrl" type="submit">
+                                            Thanh toán qua VNPAY
+                                            <img style="height:35px" src="~/images/banners/vnpay2.jpg" />
+                                        </button>
+
                                     </div>
                                 </div>
                             </div>
@@ -238,11 +235,55 @@
     </div>
 </main>
 <!-- Main Content Area End Here -->
+
+<div class="table-responsive">
+    <form action="/Checkout/CreatePaymentUrl" id="frmCreateOrder" method="POST">
+        <div class="form-group">
+            <label for="ordertype">Loại hàng hóa </label>
+            <select name="OrderType" id="ordertype" class="form-control">
+                <option value="electric">Đồ điện tử</option>
+                <option value="fashion">Thời trang</option>
+                <option value="other">Khác</option>
+            </select>
+        </div>
+        <br />
+        <div class="form-group">
+            <label for="Name">Tên khách hàng</label>
+            <input class="form-control"
+                   id="Name"
+                   name="Name"
+                   type="text"
+                   value="Code Mega">
+        </div>
+        <br />
+        <div class="form-group">
+            <label for="Amount">Số tiền</label>
+            <input class="form-control"
+                   id="Amount"
+                   name="tongDonHangInput"
+                   type="text"
+                   value="20000000">
+        </div>
+        <br />
+        <div class="form-group">
+            <label for="OrderDescription">Nội dung thanh toán</label>
+            <textarea class="form-control"
+                      cols="20"
+                      id="OrderDescription"
+                      name="OrderDescription"
+                      rows="2">Thanh toán tại Code Mega</textarea>
+        </div>
+        <br />
+        <button type="submit" class="btn btn-primary">Thanh toán (Checkout)</button>
+    </form>
+</div>
+
+
 @section Scripts{
     <script>
         $(document).ready(function () {
             $('select').niceSelect();
-            
+
             //
             $(function () {
                 $("#TinhThanh").change(function () {
@@ -319,7 +360,7 @@
                         TongTien: $("#tongtien").val()
                     },
                     success: function (result) {
-                        if (result.success ==true){
+                        if (result.success == true) {
                             var hienthi = (result.tienGiam).toLocaleString('en-US')
                             $("#soTienGiam").html("");
                             $("#soTienGiam").html(hienthi);
@@ -327,30 +368,38 @@
                             console.log($("#soTienGiamInput").val());
                             //
                             var tongDonHang
-                            if (tongTienSanPham >= 999000){
-                                tongDonHang = (tongTienSanPham - result.tienGiam).toLocaleString('en-US')
+                            var tongDonHangInput
+                            if (tongTienSanPham >= 999000) {
+                                tongDonHang = (tongTienSanPham - result.tienGiam).toLocaleString('en-US');
+                                tongDonHangInput = (tongTienSanPham - result.tienGiam);
                             }
-                            else{
-                                tongDonHang = (tongTienSanPham + 50000 - result.tienGiam).toLocaleString('en-US')
+                            else {
+                                tongDonHang = (tongTienSanPham + 50000 - result.tienGiam).toLocaleString('en-US');
+                                tongDonHangInput = (tongTienSanPham + 50000 - result.tienGiam);
                             }
                             $("#tongDonHang").html(tongDonHang);
-                            
+                            $("#tongDonHangInput").val(tongDonHangInput).trigger('change');
+
                         }
-                        else{
+                        else {
                             alert(result.error);
                             $("#soTienGiam").html("");
                             $("#soTienGiam").html(0);
                             $("#soTienGiamInput").val(0).change();
                             //
                             var tongDonHang
+                            var tongDonHangInput
                             if (tongTienSanPham >= 999000) {
-                                tongDonHang = (tongTienSanPham).toLocaleString('en-US')
+                                tongDonHang = (tongTienSanPham).toLocaleString('en-US');
+                                tongDonHangInput = tongTienSanPham;
                             }
                             else {
-                                tongDonHang = (tongTienSanPham + 50000).toLocaleString('en-US')
+                                tongDonHang = (tongTienSanPham + 50000).toLocaleString('en-US');
+                                tongDonHangInput = (tongTienSanPham + 50000);
                             }
                             $("#tongDonHang").html(tongDonHang);
-                        } 
+                            $("#tongDonHangInput").val(tongDonHangInput).trigger('change');
+                        }
                     },
                     error: function (result) {
                         alert('Lỗi');
@@ -358,7 +407,7 @@
                 });
             });
             // bắt sự kiện thay đổi
-            
+
         });
     </script>
 }

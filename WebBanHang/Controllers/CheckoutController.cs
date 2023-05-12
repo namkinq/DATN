@@ -10,7 +10,9 @@ using System.Linq;
 using WebBanHang.Areas.Admin.Controllers;
 using WebBanHang.Extension;
 using WebBanHang.Models;
+using WebBanHang.Models.Payments;
 using WebBanHang.ModelViews;
+using WebBanHang.Services;
 
 namespace WebBanHang.Controllers
 {
@@ -18,11 +20,13 @@ namespace WebBanHang.Controllers
     {
         private readonly dbBanHangContext _context;
         public INotyfService _notyfService { get; }
+        private readonly IVnPayService _vnPayService;
 
-        public CheckoutController(dbBanHangContext context, INotyfService notyfService)
+        public CheckoutController(dbBanHangContext context, INotyfService notyfService, IVnPayService vnPayService)
         {
             _context = context;
             _notyfService = notyfService;
+            _vnPayService = vnPayService;
         }
 
         public List<CartItem> GioHang
@@ -256,7 +260,23 @@ namespace WebBanHang.Controllers
 
                 }
             }
-            return Json(new { success = false, error="Lỗi" });
+            return Json(new { success = false, error = "Lỗi" });
+        }
+
+
+        //vnpay
+        public IActionResult CreatePaymentUrl(PaymentInformationModel model)
+        {
+            var url = _vnPayService.CreatePaymentUrl(model, HttpContext);
+
+            return Redirect(url);
+        }
+
+        public IActionResult PaymentCallback()
+        {
+            var response = _vnPayService.PaymentExecute(Request.Query);
+
+            return Json(response);
         }
     }
 }
