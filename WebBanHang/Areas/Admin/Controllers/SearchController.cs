@@ -23,17 +23,26 @@ namespace WebBanHang.Areas.Admin.Controllers
             List<SanPham> ls = new List<SanPham>();
             if (string.IsNullOrEmpty(searchKey) || searchKey.Length < 1)
             {
-                return PartialView("ListSanPhamSearchPartial", null);
-            }
-
-            ls = _context.SanPhams
+                ls = _context.SanPhams
                 .AsNoTracking()
-                .Include(x=>x.MaLoaiNavigation)
-                .Include(x=>x.MaThNavigation)
-                .Where(x=>x.TenSp.Contains(searchKey))
-                .OrderByDescending(x=>x.TenSp)
+                .Include(x => x.MaLoaiNavigation)
+                .Include(x => x.MaThNavigation)
+                .OrderByDescending(x => x.TenSp)
                 .Take(10)
                 .ToList();
+            }
+            else
+            {
+                ls = _context.SanPhams
+                .AsNoTracking()
+                .Include(x => x.MaLoaiNavigation)
+                .Include(x => x.MaThNavigation)
+                .Where(x => x.TenSp.Contains(searchKey))
+                .OrderByDescending(x => x.TenSp)
+                .Take(10)
+                .ToList();
+            }
+
             if (ls == null)
             {
                 return PartialView("ListSanPhamSearchPartial", null);
@@ -50,16 +59,25 @@ namespace WebBanHang.Areas.Admin.Controllers
             List<DonHang> ls = new List<DonHang>();
             if (string.IsNullOrEmpty(searchKey) || searchKey.Length < 1)
             {
-                return PartialView("TimDonHangSearchPartial", null);
+                ls = _context.DonHangs
+                    .AsNoTracking()
+                    .Include(x => x.MaTtNavigation)
+                    .OrderByDescending(x => x.NgayDat)
+                    .Take(10)
+                    .ToList();
             }
-
-            ls = _context.DonHangs
+            else
+            {
+                ls = _context.DonHangs
                 .AsNoTracking()
                 .Include(x => x.MaTtNavigation)
                 .Where(x => x.MaDh == Convert.ToInt32(searchKey))
                 .OrderByDescending(x => x.NgayDat)
                 .Take(10)
                 .ToList();
+            }
+
+
             if (ls == null)
             {
                 return PartialView("TimDonHangSearchPartial", null);
@@ -75,15 +93,22 @@ namespace WebBanHang.Areas.Admin.Controllers
             List<KhachHang> ls = new List<KhachHang>();
             if (string.IsNullOrEmpty(searchKey) || searchKey.Length < 1)
             {
-                return PartialView("TimKHSearchPartial", null);
+                ls = _context.KhachHangs
+                    .AsNoTracking()
+                    .OrderByDescending(x => x.MaKh)
+                    .Take(10)
+                    .ToList();
             }
-
-            ls = _context.KhachHangs
+            else
+            {
+                ls = _context.KhachHangs
                 .AsNoTracking()
-                .Where(x => x.Email.Contains( searchKey) ||x.Sdt.Contains(searchKey))
+                .Where(x => x.Email.Contains(searchKey) || x.Sdt.Contains(searchKey))
                 .OrderByDescending(x => x.MaKh)
                 .Take(10)
                 .ToList();
+            }
+
             if (ls == null)
             {
                 return PartialView("TimKHSearchPartial", null);

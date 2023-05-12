@@ -224,9 +224,17 @@ namespace WebBanHang.Areas.Admin.Controllers
                     await _context.SaveChangesAsync();
                     _notyfService.Success("Cập nhật trạng thái thành công");
 
-                    ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", donhang.MaShipper);
+                    if (donHang.MaTt == 2)
+                    {
+                        ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt",0);
+                    }
+                    else
+                    {
+                        ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", donhang.MaShipper);
+                    }
+                        
                     ViewData["lsTrangThai"] = new SelectList(_context.TrangThaiDonHangs, "MaTt", "TenTt", donhang.MaTt);
-                    return View(donhang);
+                    return RedirectToAction("ChangeStatus", id = donhang.MaDh);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

@@ -148,6 +148,7 @@ namespace WebBanHang.Controllers
 
                     donhang.NgayDat = DateTime.Now;
                     donhang.MaTt = 1;
+                    donhang.PhuongThucThanhToan = "Thanh toán khi nhận hàng";
 
                     donhang.TienShip = 50000;
                     donhang.GiamGiaShip = donhang.TienShip - phiGiaoHangInput;

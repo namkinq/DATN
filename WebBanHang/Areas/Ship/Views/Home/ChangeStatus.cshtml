@@ -28,7 +28,10 @@
                             <h4 class="p-l-10 m-t-10">Thông tin đơn hàng:</h4>
                             <address class="p-l-10 m-t-10">
                                 <span class="font-weight-semibold text-dark">MÃ ĐƠN HÀNG: #@Model.MaDh</span><br>
-                                <span class="font-weight-semibold text-dark">KHÁCH HÀNG: @Model.MaKhNavigation.TenKh (SĐT: @Model.Sdt)</span><br>
+                                <span class="font-weight-semibold text-dark">Hình thức thanh toán: @Model.PhuongThucThanhToan</span><br>
+
+                                <span class="font-weight-semibold text-dark">Khách hàng: @Model.MaKhNavigation.TenKh (SĐT: @Model.Sdt)</span><br>
+                                
                                 <span class="font-weight-semibold text-dark">Ngày đặt: @Model.NgayDat</span><br>
                                 <span class="font-weight-semibold text-dark">Địa chỉ: @ViewBag.FullAddress</span><br>
                             </address>
@@ -39,7 +42,7 @@
                 <div class="col-sm-6 ">
                     <div class="card">
                         <div class="card-body" style="height:250px">
-                            <h4 class="p-l-10 m-t-10">Thông tin vận chuyển:</h4>
+                            <h4 class="p-l-10 m-t-10">Thông tin giao hàng:</h4>
                             <address class="p-l-10 m-t-10">
                                 <span class="font-weight-semibold text-dark">Trạng thái đơn hàng: @Model.MaTtNavigation.TenTt</span><br>
                                 <span class="font-weight-semibold text-dark">Shipper: @Model.MaShipperNavigation.TenHt</span><br>
@@ -68,6 +71,36 @@
                                                 <div class="form-group row">
                                                     <div class="col-sm-12">
                                                         <button type="submit" class="btn btn-warning">Giao thất bại</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-group row">
+                                        <div class="col-sm-5 ">
+                                            <form asp-controller="Home" asp-action="ChangeStatus" asp-route-id="@Model.MaDh" method="post">
+                                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                <input type="hidden" asp-for="MaDh" />
+                                                <input type="hidden" name="KQ" value="TC" />
+                                                <div class="form-group row">
+                                                    <div class="col-sm-12">
+                                                        <button disabled type="submit" class="btn btn-success">Giao thành công</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <form asp-controller="Home" asp-action="ChangeStatus" asp-route-id="@Model.MaDh" method="post">
+                                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                <input type="hidden" asp-for="MaDh" />
+                                                <input type="hidden" name="KQ" value="TB" />
+                                                <div class="form-group row">
+                                                    <div class="col-sm-12">
+                                                        <button disabled type="submit" class="btn btn-warning">Giao thất bại</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -120,6 +153,14 @@
                     <div class="col-sm-12">
                         <div class="float-right text-right">
                             <p class="font-weight-semibold text-dark">Tạm tính: @Model.TongTien.Value.ToString("#,##0") đ</p>
+                            <p class="font-weight-semibold text-dark">Giảm giá: @Model.GiamGia.Value.ToString("#,##0") đ</p>
+                            <p class="font-weight-semibold text-dark">
+                                Phí giao hàng:
+                                @{
+                                    var pgh = Model.TienShip - Model.GiamGiaShip;
+                                }
+                                @pgh.Value.ToString("#,##0") đ
+                            </p>
                             <hr>
                             <h4><span class="font-weight-semibold text-dark">Tổng cộng :</span> @Model.TongTien.Value.ToString("#,##0") đ</h4>
                         </div>
