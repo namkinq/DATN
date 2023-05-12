@@ -134,6 +134,8 @@ namespace WebBanHang.Models
 
                 entity.Property(e => e.NgayShip).HasColumnType("datetime");
 
+                entity.Property(e => e.PhuongThucThanhToan).HasMaxLength(250);
+
                 entity.Property(e => e.Sdt)
                     .HasMaxLength(10)
                     .IsUnicode(false)
