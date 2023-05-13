@@ -22,6 +22,15 @@
 
 <div class="card">
     <div class="card-body">
+        <div class="row m-b-30">
+            <div class="col-lg-4">
+                <a class="btn btn-success" asp-area="Admin" asp-controller="DonHangs" asp-action="InHoaDon" asp-route-id="@Model.MaDh">
+                    <i class="anticon anticon-file-text m-r-5"></i>
+                    <span>In hóa đơn</span>
+                </a>
+            </div>
+        </div>
+
         <div id="invoice" class="p-h-30">
 
             <div class="row m-t-20 lh-2">
@@ -190,6 +199,25 @@
         </div>
     </div>
 </div>
+<table style="border-collapse: collapse">
+    <tr>
+        <td colspan="4">Tạm tính</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="4">Giảm giá</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="4">Phí giao hàng</td>
+        <td></td>
+    </tr>
+    <tr>
+        <th colspan="4">Tổng</th>
+        <th></th>
+    </tr>
+</table>
+
 @section Scripts{
     <!-- page js -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

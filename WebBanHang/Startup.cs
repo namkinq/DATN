@@ -1,4 +1,6 @@
 using AspNetCoreHero.ToastNotification;
+using DinkToPdf.Contracts;
+using DinkToPdf;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -44,6 +46,8 @@ namespace WebBanHang
             //});
             //vnp
             services.AddScoped<IVnPayService, VnPayService>();
+            //pdf
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(p =>

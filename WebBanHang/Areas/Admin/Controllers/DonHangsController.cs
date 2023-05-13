@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PagedList.Core;
 using WebBanHang.Models;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 
 namespace WebBanHang.Areas.Admin.Controllers
 {
@@ -18,11 +21,13 @@ namespace WebBanHang.Areas.Admin.Controllers
         private readonly dbBanHangContext _context;
 
         public INotyfService _notyfService { get; }
+        private readonly IConverter _pdfConverter;
 
-        public DonHangsController(dbBanHangContext context, INotyfService notyfService)
+        public DonHangsController(dbBanHangContext context, INotyfService notyfService, IConverter pdfConverter)
         {
             _context = context;
             _notyfService = notyfService;
+            _pdfConverter = pdfConverter;
 
         }
 
@@ -198,9 +203,9 @@ namespace WebBanHang.Areas.Admin.Controllers
 
                     if (donhang != null)
                     {
-                        if(donHang.MaTt == 3)
+                        if (donHang.MaTt == 3)
                         {
-                            if(donHang.MaShipper == null)
+                            if (donHang.MaShipper == null)
                             {
                                 _notyfService.Warning("Chưa chọn shipper");
 
@@ -226,13 +231,13 @@ namespace WebBanHang.Areas.Admin.Controllers
 
                     if (donHang.MaTt == 2)
                     {
-                        ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt",0);
+                        ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", 0);
                     }
                     else
                     {
                         ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", donhang.MaShipper);
                     }
-                        
+
                     ViewData["lsTrangThai"] = new SelectList(_context.TrangThaiDonHangs, "MaTt", "TenTt", donhang.MaTt);
                     return RedirectToAction("ChangeStatus", id = donhang.MaDh);
                 }
@@ -256,7 +261,114 @@ namespace WebBanHang.Areas.Admin.Controllers
             return View(donHang);
         }
 
+        public ActionResult InHoaDon(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var dh = _context.DonHangs
+                .AsNoTracking()
+                .Include(d => d.MaKhNavigation)
+                .Include(d => d.MaShipperNavigation)
+                .Include(d => d.MaTtNavigation)
+                .Include(d => d.ChiTietDonHangs)
+                .FirstOrDefault(m => m.MaDh == id);
+
+            var ctdh = _context.ChiTietDonHangs
+                        .AsNoTracking()
+                        .Include(x => x.MaSpNavigation)
+                        .Where(x => x.MaDh == dh.MaDh)
+                        .OrderBy(x => x.MaSp)
+                        .ToList();
+            if (dh == null)
+            {
+                return NotFound();
+            }
+            string fullAddress = $"{dh.DiaChi}, {getLocation(dh.Maxa, dh.Maqh, dh.Matp)}";
+            // Get the HTML content of the invoice
+            string html1 = $"";
+            html1 += $"<html><body><h1>Hóa đơn</h1>" +
+                $"<h4>MÃ ĐƠN HÀNG: #{dh.MaDh}</h4>" +
+                $"<h4>Hình thức thanh toán: {dh.PhuongThucThanhToan}</h4>" +
+                $"<h4>Khách hàng: {dh.HoTen} - {dh.Sdt}</h4>" +
+                $"<h4>Ngày đặt: {dh.NgayDat}</h4>" +
+                $"<h4>Địa chỉ: {fullAddress}</h4>" +
+                $"<h4>Trạng thái: {dh.MaTtNavigation.TenTt}</h4>" +
+                $"<table style=\"border-collapse: collapse\" border=\"1\">" +
+                $"<tr>" +
+                    $"<th>STT</th>" +
+                    $"<th>Sản phẩm</th>" +
+                    $"<th>Số lượng</th>" +
+                    $"<th>Đơn giá</th>" +
+                    $"<th>Thành tiền</th>" +
+                 $"</tr>";
+
+            string html2 = "";
+            int i = 1;
+            
+            foreach (var item in ctdh)
+            {
+                html2 +=
+                    $"<tr>" +
+                        $"<td>{i}</td>" +
+                        $"<td>{item.MaSpNavigation.TenSp}</td>" +
+                        $"<td>{item.SoLuong}</td>" +
+                        $"<td>{item.GiaGiam}</td>" +
+                        $"<td>{item.TongTien}</td>" +
+                     $"</tr>";
+                i++;
+            }
+
+            string html3 = "";
+            html3 +=
+                "<tr>" +
+                    "<td colspan=\"4\">Tạm tính</td>" +
+                    $"<td>{ctdh.Sum(x=>x.TongTien)}</td>" +
+                "</tr>" +
+                "<tr>" +
+                    "<td colspan=\"4\">Giảm giá</td>" +
+                    $"<td>{dh.GiamGia}</td>" +
+                "</tr>" +
+                "<tr>" +
+                    "<td colspan=\"4\">Phí giao hàng</td>" +
+                   $" <td>{dh.TienShip-dh.GiamGiaShip}</td>" +
+                "</tr>" +
+                "<tr>" +
+                    "<th colspan=\"4\">Tổng</th>" +
+                    $"<th>{dh.TongTien}</th>" +
+                "</tr>" +
+                $"</table>" +
+                $"" +
+                $"</body></html>";
+
+            string htmlContent = html1 + html2 + html3;
+
+            // Convert HTML to PDF
+            var doc = new HtmlToPdfDocument()
+            {
+                GlobalSettings = {
+                PaperSize = PaperKind.A4,
+                Orientation = Orientation.Portrait
+            },
+                Objects = {
+                new ObjectSettings() {
+                    HtmlContent = htmlContent,
+                    WebSettings = { DefaultEncoding = "utf-8" }
+                }
+            }
+            };
+
+            var pdfBytes = _pdfConverter.Convert(doc);
+
+            // Set the response content type and headers
+            Response.ContentType = "application/pdf";
+            Response.Headers.Add("content-disposition", "attachment;filename=invoice.pdf");
+
+            // Write the PDF to the response
+            return File(pdfBytes, "application/pdf");
+        }
 
 
 

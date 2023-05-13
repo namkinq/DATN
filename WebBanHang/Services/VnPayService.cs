@@ -34,7 +34,9 @@ namespace WebBanHang.Services
             pay.AddRequestData("vnp_CurrCode", _configuration["Vnpay:CurrCode"]);
             pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));
             pay.AddRequestData("vnp_Locale", _configuration["Vnpay:Locale"]);
-            pay.AddRequestData("vnp_OrderInfo", $"Info");
+            pay.AddRequestData("vnp_OrderInfo", $"{model.FullName}-{model.Phone}-{model.Address}" +
+                $"-{model.TinhThanh}-{model.QuanHuyen}-{model.PhuongXa}" +
+                $"-{model.soTienGiamInput}-{model.phiGiaoHangInput}-{model.tongDonHangInput}");
             pay.AddRequestData("vnp_OrderType", $"Type");
             pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
             pay.AddRequestData("vnp_TxnRef", tick);

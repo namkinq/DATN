@@ -52,6 +52,10 @@ namespace WebBanHang.Controllers
             {
                 return RedirectToAction("DangNhap", "Accounts");
             }
+            if (cart == null)
+            {
+                return RedirectToAction("Index", "ShoppingCart");
+            }
             MuaHangVM model = new MuaHangVM();
 
             if (taikhoanID != null)
@@ -277,7 +281,116 @@ namespace WebBanHang.Controllers
         {
             var response = _vnPayService.PaymentExecute(Request.Query);
 
-            return Json(response);
+            //Json(response);
+
+            var thongTinDonHang = response.OrderDescription;
+            string[] thongTinDonHangArr = thongTinDonHang.Split('-');
+
+            string FullName = thongTinDonHangArr[0];
+            string Phone = thongTinDonHangArr[1];
+            string Address = thongTinDonHangArr[2];
+            string TinhThanh = thongTinDonHangArr[3];
+            string QuanHuyen = thongTinDonHangArr[4];
+            string PhuongXa = thongTinDonHangArr[5];
+            int soTienGiamInput = Convert.ToInt32(thongTinDonHangArr[6]);
+            int phiGiaoHangInput = Convert.ToInt32(thongTinDonHangArr[7]);
+            int tongDonHangInput = Convert.ToInt32(thongTinDonHangArr[8]);
+
+            //
+            //lấy giỏ
+            var cart = HttpContext.Session.Get<List<CartItem>>("GioHang");
+            var taikhoanID = HttpContext.Session.GetString("CustomerId");
+            MuaHangVM model = new MuaHangVM();
+
+            if (taikhoanID != null)
+            {
+                var khachhang = _context.KhachHangs.AsNoTracking()
+                    .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
+                model.CustomerId = khachhang.MaKh;
+                model.FullName = khachhang.TenKh;
+                model.Email = khachhang.Email;
+                model.Phone = khachhang.Sdt;
+                model.Address = khachhang.DiaChi;
+                model.TinhThanh = khachhang.Matp;
+                model.QuanHuyen = khachhang.Maqh;
+                model.PhuongXa = khachhang.Maxa;
+
+                if (khachhang.DiaChi == null) khachhang.DiaChi = Address;
+                if (khachhang.Matp == null) khachhang.Matp = TinhThanh;
+                if (khachhang.Maqh == null) khachhang.Maqh = QuanHuyen;
+                if (khachhang.Maxa == null) khachhang.Maxa = PhuongXa;
+
+
+                _context.Update(khachhang);
+                _context.SaveChanges();
+            }
+            ViewBag.GioHang = cart;
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    //khoi tao
+                    DonHang donhang = new DonHang();
+
+                    donhang.MaKh = model.CustomerId;
+                    donhang.Sdt = model.Phone;
+                    donhang.HoTen = model.FullName;
+                    donhang.DiaChi = model.Address;
+                    donhang.Matp = model.TinhThanh;
+                    donhang.Maqh = model.QuanHuyen;
+                    donhang.Maxa = model.PhuongXa;
+
+                    donhang.NgayDat = DateTime.Now;
+                    donhang.MaTt = 1;
+                    donhang.PhuongThucThanhToan = "VNPAY";
+
+                    donhang.TienShip = 50000;
+                    donhang.GiamGiaShip = donhang.TienShip - phiGiaoHangInput;
+                    donhang.GiamGia = soTienGiamInput;
+
+                    donhang.TongTien = Convert.ToInt32(cart.Sum(x => x.TotalMoney)) + donhang.TienShip - donhang.GiamGiaShip - donhang.GiamGia;
+
+                    _context.Add(donhang);
+                    _context.SaveChanges();
+
+                    //ds sp
+                    foreach (var item in cart)
+                    {
+                        ChiTietDonHang ctdh = new ChiTietDonHang();
+                        ctdh.MaDh = donhang.MaDh;
+                        ctdh.MaSp = item.product.MaSp;
+                        ctdh.GiaBan = item.product.GiaBan;
+                        ctdh.GiaGiam = item.product.GiaGiam;
+                        ctdh.SoLuong = item.amount;
+                        ctdh.TongTien = item.TotalMoney;
+                        //
+                        SanPham hh = _context.SanPhams.SingleOrDefault(p => p.MaSp == item.product.MaSp);
+                        hh.SoLuongCo -= 1;
+
+                        _context.Add(ctdh);
+                        _context.Update(hh);
+                    }
+
+                    _context.SaveChanges();
+
+                    //
+
+                    //clear
+                    HttpContext.Session.Remove("GioHang");
+                    _notyfService.Success("Đặt hàng thành công");
+
+                    return RedirectToAction("Dashboard", "Accounts");
+                }
+            }
+            catch
+            {
+
+                ViewBag.GioHang = cart;
+                return RedirectToAction("Index", "Checkout");
+            }
+
+            ViewBag.GioHang = cart;
+            return RedirectToAction("Index", "Checkout");
         }
     }
 }
