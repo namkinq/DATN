@@ -71,16 +71,6 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5>Doanh thu</h5>
-                    @*<div>
-                    <div class="btn-group">
-                    <button class="btn btn-default active">
-                    <span>Month</span>
-                    </button>
-                    <button class="btn btn-default">
-                    <span>Year</span>
-                    </button>
-                    </div>
-                    </div>*@
                 </div>
                 <div class="m-t-50" style="height: 330px">
                     <canvas class="chart" id="revenue-chart"></canvas>
@@ -88,6 +78,7 @@
             </div>
         </div>
     </div>
+    
     <div class="col-md-12 col-lg-4">
         <div class="card">
             <div class="card-body">
@@ -131,6 +122,18 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>Top sản phẩm bán chạy</h5>
+                </div>
+                <div class="m-t-50" style="height: 330px">
+                    <canvas class="chart" id="topPro"></canvas>
                 </div>
             </div>
         </div>
@@ -199,6 +202,57 @@
                         'rgb(255, 99, 132)',
                         
                     ],
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        //
+        //
+        var salesData2 = @Html.Raw(Json.Serialize(ViewBag.TopSellingProducts));
+        var nameP = @Html.Raw(Json.Serialize(ViewBag.ProductName));
+        console.log(salesData2);
+        console.log(nameP);
+        var chartLabels = nameP.map(s => s.name);
+
+        var chartData = salesData2.map(s => s.quantity);
+        console.log(chartData);
+
+        var ctx = document.getElementById('topPro').getContext('2d');
+        var salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Số lượng đã bán',
+                    data: chartData,
+                    fill: false,
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(255, 159, 64)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(54, 162, 235)',
+                        'rgb(153, 102, 255)',
+                        'rgb(201, 203, 207)'
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 205, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(201, 203, 207, 0.2)'
+                    ],
+                    borderWidth: 1,
                     tension: 0.1
                 }]
             },

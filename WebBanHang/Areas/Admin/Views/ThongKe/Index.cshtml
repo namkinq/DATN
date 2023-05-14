@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<WebBanHang.ModelViews.ThongKeVM>
+@{
     ViewData["Title"] = "Thống kê";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
@@ -15,116 +16,50 @@
 </div>
 <div class="card">
     <div class="card-body">
-        <h4>Doanh số</h4>
-        <div class="m-t-25">
-            <div class="row">
-                <div class="col-md-8 mx-auto">
-                    <canvas id="salesChart" width="800" height="400"></canvas>
+        <div class="row m-b-30">
+            <form id="myform" asp-action="Index" method="post">
+
+            </form>
+            <label style="padding-left:30px" class=" col-form-label">Từ</label>
+            <div class="col-sm-3">
+                <div class="input-affix">
+                    <input required form="myform" id="tuNgay" name="tuNgay" type="date" class="form-control" placeholder="Từ ngày">
                 </div>
             </div>
+            <div class="col-sm-3">
+                <div class="input-affix">
+                    <input required form="myform" id="denNgay" name="denNgay" type="date" class="form-control" placeholder="Đến ngày">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <button form="myform" type="submit" class="btn btn-primary">Thống kê</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+                        <th style="font-weight:bold">Ngày</th>
+                        <th style="font-weight:bold">Tổng đơn hàng</th>
+                        <th style="font-weight:bold">Tổng doanh thu</th>
+                    </tr>
+                </thead>
+                <tbody id="records_table">
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.NgayDat.ToShortDateString()</td>
+                                <td>@item.TongDH</td>
+                                <td>@item.TongDT.ToString("##,##0") đ</td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-<div class="card">
-    <div class="card-body">
-        <h4>Top sản phẩm bán chạy</h4>
-        <div class="m-t-25">
-            <div class="row">
-                <div class="col-md-8 mx-auto">
-                    <canvas id="topPro"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-@section Scripts{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js"></script>
-    <script>
-        var salesData = @Html.Raw(Json.Serialize(ViewBag.SalesData));
-        //console.log(salesData);
-        var chartLabels = salesData.map(s => {
-            var date = new Date(2023, s.month - 1, 1);
-            return date.toLocaleString('default', { month: 'short' });
-        });
-
-        var chartData = salesData.map(s => s.salesTotal);
-        //console.log(chartData);
-
-        var ctx = document.getElementById('salesChart').getContext('2d');
-        var salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    label: 'Doanh số các tháng gần đây',
-                    data: chartData,
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-
-
-
-        //
-        var salesData2 = @Html.Raw(Json.Serialize(ViewBag.TopSellingProducts));
-        var nameP = @Html.Raw(Json.Serialize(ViewBag.ProductName));
-        console.log(salesData2);
-        console.log(nameP);
-        var chartLabels = nameP.map(s => s.name);
-
-        var chartData = salesData2.map(s => s.quantity);
-        console.log(chartData);
-
-        var ctx = document.getElementById('topPro').getContext('2d');
-        var salesChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    label: 'Số lượng đã bán',
-                    data: chartData,
-                    fill: false,
-                    borderColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(255, 159, 64)',
-                        'rgb(255, 205, 86)',
-                        'rgb(75, 192, 192)',
-                        'rgb(54, 162, 235)',
-                        'rgb(153, 102, 255)',
-                        'rgb(201, 203, 207)'
-                    ],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 205, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(201, 203, 207, 0.2)'
-                    ],
-                    borderWidth: 1,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-    </script>
-}

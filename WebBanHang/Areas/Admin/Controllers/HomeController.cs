@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using WebBanHang.Models;
@@ -61,6 +62,25 @@ namespace WebBanHang.Areas.Admin.Controllers
             ViewBag.Ten1 = "Chờ xử lý";
             ViewBag.Ten2 = "Giao thành công";
             ViewBag.Ten3 = "Đã hủy";
+
+
+            var topSellingProducts = _context.ChiTietDonHangs
+                .Include(x => x.MaSpNavigation)
+            .GroupBy(od => od.MaSp)
+            .Select(g => new { ProductId = g.Key, Quantity = g.Sum(od => od.SoLuong) })
+            .OrderByDescending(g => g.Quantity)
+            .Take(5)
+            .ToList();
+
+            var productIds = topSellingProducts.Select(p => p.ProductId).ToList();
+
+            var productsName = _context.SanPhams
+                .Where(p => productIds.Contains(p.MaSp))
+                .Select(g => new { Name = g.TenSp })
+                .ToList();
+
+            ViewBag.TopSellingProducts = topSellingProducts;
+            ViewBag.ProductName = productsName;
 
 
             return View();

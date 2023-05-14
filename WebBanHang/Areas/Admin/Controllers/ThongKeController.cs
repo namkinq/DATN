@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using WebBanHang.Models;
+using WebBanHang.ModelViews;
 
 namespace WebBanHang.Areas.Admin.Controllers
 {
@@ -28,36 +30,35 @@ namespace WebBanHang.Areas.Admin.Controllers
             {
                 return RedirectToAction("DangNhap", "AccountsAdmin");
             }
-
-            var salesData = _context.DonHangs
-            .Where(s => s.NgayDat >= DateTime.Today.AddMonths(-12) && s.MaTt == 4)
-            .GroupBy(s => s.NgayDat.Value.Month)
-            .Select(g => new { Month = g.Key, SalesTotal = g.Sum(s => s.TongTien) })
-            .OrderBy(g => g.Month)
-            .ToList();
-
-            ViewBag.SalesData = salesData;
-
-
-            var topSellingProducts = _context.ChiTietDonHangs
-                .Include(x=>x.MaSpNavigation)
-            .GroupBy(od => od.MaSp)
-            .Select(g => new { ProductId = g.Key, Quantity = g.Sum(od => od.SoLuong) })
-            .OrderByDescending(g => g.Quantity)
-            .Take(5)
-            .ToList();
-
-            var productIds = topSellingProducts.Select(p => p.ProductId).ToList();
-
-            var productsName = _context.SanPhams
-                .Where(p => productIds.Contains(p.MaSp))
-                .Select(g=> new {Name = g.TenSp})
-                .ToList();
-
-            ViewBag.TopSellingProducts = topSellingProducts;
-            ViewBag.ProductName = productsName;
-
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Index(DateTime ?tuNgay, DateTime ?denNgay)
+        {
+            var taikhoanID = HttpContext.Session.GetString("AdminId");
+            if (string.IsNullOrEmpty(taikhoanID))
+            {
+                return RedirectToAction("DangNhap", "AccountsAdmin");
+            }
+                var tk = _context.DonHangs
+                    .Where(x => x.NgayDat > tuNgay && x.NgayDat < denNgay)
+                .GroupBy(o => o.NgayDat.Value.Date)
+                .Select(g => new { NgayDat = g.Key, TongDH = g.Count(), TongDT = g.Sum(o => o.TongTien) })
+                .ToList();
+            
+
+            List<ThongKeVM> tklist = new List<ThongKeVM>();
+            foreach(var item in tk)
+            {
+                ThongKeVM tkvm = new ThongKeVM();
+                tkvm.NgayDat = (DateTime)item.NgayDat;
+                tkvm.TongDH = item.TongDH;
+                tkvm.TongDT = (int)item.TongDT;
+                tklist.Add(tkvm);
+            }
+
+            return View(tklist);
         }
     }
 }
