@@ -1,7 +1,7 @@
 ﻿@model WebBanHang.Models.DonHang
 
 @{
-    ViewData["Title"] = "Thay đổi trạng thái đơn hàng";
+    ViewData["Title"] = "Trạng thái đơn hàng";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
     List<ChiTietDonHang> ctDH = ViewBag.ChiTiet;
 
@@ -15,7 +15,7 @@
         <nav class="breadcrumb breadcrumb-dash">
             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
             <a asp-area="Admin" asp-controller="DonHangs" asp-action="Index" class="breadcrumb-item">Đơn hàng</a>
-            <span class="breadcrumb-item active">Thay đổi trạng thái đơn hàng</span>
+            <span class="breadcrumb-item active">Trạng thái đơn hàng</span>
         </nav>
     </div>
 </div>
@@ -199,24 +199,6 @@
         </div>
     </div>
 </div>
-<table style="border-collapse: collapse">
-    <tr>
-        <td colspan="4">Tạm tính</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td colspan="4">Giảm giá</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td colspan="4">Phí giao hàng</td>
-        <td></td>
-    </tr>
-    <tr>
-        <th colspan="4">Tổng</th>
-        <th></th>
-    </tr>
-</table>
 
 @section Scripts{
     <!-- page js -->

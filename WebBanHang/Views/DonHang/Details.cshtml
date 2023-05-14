@@ -88,10 +88,15 @@
 
     @if (Model.DonHang.MaTt == 1)
     {
-        <form asp-controller="DonHang" asp-action="Huy" method="post">
-            <input hidden id="madh" name="madh" value="@Model.DonHang.MaDh" type="text">
-            <button class="btn btn-secondary btn-primary-hover" type="submit">Hủy đơn hàng</button>
-        </form>
+        if(Model.DonHang.PhuongThucThanhToan =="VNPAY"){}
+        else
+        {
+            <form asp-controller="DonHang" asp-action="Huy" method="post">
+                <input hidden id="madh" name="madh" value="@Model.DonHang.MaDh" type="text">
+                <button class="btn btn-secondary btn-primary-hover" type="submit">Hủy đơn hàng</button>
+            </form>
+        }
+        
     }
     @if (Model.DonHang.MaShipper != null)
     {

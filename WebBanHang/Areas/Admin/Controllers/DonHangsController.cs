@@ -289,20 +289,23 @@ namespace WebBanHang.Areas.Admin.Controllers
             string fullAddress = $"{dh.DiaChi}, {getLocation(dh.Maxa, dh.Maqh, dh.Matp)}";
             // Get the HTML content of the invoice
             string html1 = $"";
-            html1 += $"<html><body><h1>Hóa đơn</h1>" +
-                $"<h4>MÃ ĐƠN HÀNG: #{dh.MaDh}</h4>" +
+            html1 +=
+                $"<h4>Cửa hàng Yoko</h4>" +
+                $"<h4>Địa chỉ: 36 Nguyên Xá, Minh Khai, Bắc Từ Liêm, Hà Nội</h4>" +
+                $"<html><body><h1 style=\"text-align:center\">HÓA ĐƠN</h1>" +
+                $"</br>" +
+                $"<h4 style=\"text-align:center\">MÃ ĐƠN HÀNG: #{dh.MaDh}</h4>" +
+                $"<h4>Ngày đặt: {dh.NgayDat}</h4>" +
                 $"<h4>Hình thức thanh toán: {dh.PhuongThucThanhToan}</h4>" +
                 $"<h4>Khách hàng: {dh.HoTen} - {dh.Sdt}</h4>" +
-                $"<h4>Ngày đặt: {dh.NgayDat}</h4>" +
-                $"<h4>Địa chỉ: {fullAddress}</h4>" +
-                $"<h4>Trạng thái: {dh.MaTtNavigation.TenTt}</h4>" +
+                $"<h4>Địa chỉ giao hàng: {fullAddress}</h4>" +
                 $"<table style=\"border-collapse: collapse\" border=\"1\">" +
                 $"<tr>" +
-                    $"<th>STT</th>" +
-                    $"<th>Sản phẩm</th>" +
-                    $"<th>Số lượng</th>" +
-                    $"<th>Đơn giá</th>" +
-                    $"<th>Thành tiền</th>" +
+                    $"<th width=\"100px\">STT</th>" +
+                    $"<th width=\"400px\">Sản phẩm</th>" +
+                    $"<th width=\"100px\">Số lượng</th>" +
+                    $"<th width=\"100px\">Đơn giá</th>" +
+                    $"<th width=\"100px\" align=\"right\">Thành tiền</th>" +
                  $"</tr>";
 
             string html2 = "";
@@ -316,7 +319,7 @@ namespace WebBanHang.Areas.Admin.Controllers
                         $"<td>{item.MaSpNavigation.TenSp}</td>" +
                         $"<td>{item.SoLuong}</td>" +
                         $"<td>{item.GiaGiam}</td>" +
-                        $"<td>{item.TongTien}</td>" +
+                        $"<td align=\"right\">{item.TongTien}</td>" +
                      $"</tr>";
                 i++;
             }
@@ -324,20 +327,20 @@ namespace WebBanHang.Areas.Admin.Controllers
             string html3 = "";
             html3 +=
                 "<tr>" +
-                    "<td colspan=\"4\">Tạm tính</td>" +
-                    $"<td>{ctdh.Sum(x=>x.TongTien)}</td>" +
+                    "<td align=\"right\" colspan=\"4\">Tạm tính</td>" +
+                    $"<td align=\"right\">{ctdh.Sum(x=>x.TongTien)}</td>" +
                 "</tr>" +
                 "<tr>" +
-                    "<td colspan=\"4\">Giảm giá</td>" +
-                    $"<td>{dh.GiamGia}</td>" +
+                    "<td align=\"right\" colspan=\"4\">Giảm giá</td>" +
+                    $"<td align=\"right\">{dh.GiamGia}</td>" +
                 "</tr>" +
                 "<tr>" +
-                    "<td colspan=\"4\">Phí giao hàng</td>" +
-                   $" <td>{dh.TienShip-dh.GiamGiaShip}</td>" +
+                    "<td align=\"right\" colspan=\"4\">Phí giao hàng</td>" +
+                   $" <td align=\"right\">{dh.TienShip-dh.GiamGiaShip}</td>" +
                 "</tr>" +
                 "<tr>" +
-                    "<th colspan=\"4\">Tổng</th>" +
-                    $"<th>{dh.TongTien}</th>" +
+                    "<th align=\"right\" colspan=\"4\">Tổng</th>" +
+                    $"<th align=\"right\">{dh.TongTien}</th>" +
                 "</tr>" +
                 $"</table>" +
                 $"" +
@@ -364,7 +367,7 @@ namespace WebBanHang.Areas.Admin.Controllers
 
             // Set the response content type and headers
             Response.ContentType = "application/pdf";
-            Response.Headers.Add("content-disposition", "attachment;filename=invoice.pdf");
+            Response.Headers.Add("content-disposition", $"attachment;filename=HoaDon-DH{dh.MaDh}-{DateTime.Now}.pdf");
 
             // Write the PDF to the response
             return File(pdfBytes, "application/pdf");
