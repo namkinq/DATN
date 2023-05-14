@@ -9,13 +9,11 @@ namespace WebBanHang.Models
     {
         public int MaDg { get; set; }
         public int? MaKh { get; set; }
-        public int? MaDh { get; set; }
         public int? MaSp { get; set; }
         public byte? Diem { get; set; }
         public string NoiDung { get; set; }
         public DateTime? ThoiGian { get; set; }
 
-        public virtual DonHang MaDhNavigation { get; set; }
         public virtual KhachHang MaKhNavigation { get; set; }
         public virtual SanPham MaSpNavigation { get; set; }
     }

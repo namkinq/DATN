@@ -23,6 +23,7 @@ namespace WebBanHang.Models
         public double? KhoiLuong { get; set; }
         public string MoTa { get; set; }
         public string BaoHanh { get; set; }
+        public bool? Khoa { get; set; }
         public int? MaLoai { get; set; }
         public int? MaTh { get; set; }
 

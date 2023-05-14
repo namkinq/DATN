@@ -7,13 +7,20 @@ namespace WebBanHang.Models
 {
     public partial class KhuyenMai
     {
-        public int MaCtkm { get; set; }
-        public string Ma { get; set; }
-        public string LoaiKm { get; set; }
+        public KhuyenMai()
+        {
+            DonHangs = new HashSet<DonHang>();
+        }
+
+        public int MaKm { get; set; }
         public string MoTa { get; set; }
-        public int? GttoiThieu { get; set; }
-        public int? Gtgiam { get; set; }
-        public DateTime? NgayBd { get; set; }
-        public DateTime? NgayKt { get; set; }
+        public string MaNhap { get; set; }
+        public int? SoLuong { get; set; }
+        public int? GiaTriToiThieu { get; set; }
+        public int? GiaTriGiam { get; set; }
+        public DateTime? NgayBatDau { get; set; }
+        public DateTime? NgayKetThuc { get; set; }
+
+        public virtual ICollection<DonHang> DonHangs { get; set; }
     }
 }

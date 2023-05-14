@@ -76,8 +76,6 @@ namespace WebBanHang.Models
 
                 entity.Property(e => e.MaDg).HasColumnName("MaDG");
 
-                entity.Property(e => e.MaDh).HasColumnName("MaDH");
-
                 entity.Property(e => e.MaKh).HasColumnName("MaKH");
 
                 entity.Property(e => e.MaSp).HasColumnName("MaSP");
@@ -85,11 +83,6 @@ namespace WebBanHang.Models
                 entity.Property(e => e.NoiDung).HasMaxLength(500);
 
                 entity.Property(e => e.ThoiGian).HasColumnType("datetime");
-
-                entity.HasOne(d => d.MaDhNavigation)
-                    .WithMany(p => p.DanhGiaSanPhams)
-                    .HasForeignKey(d => d.MaDh)
-                    .HasConstraintName("FK_DanhGiaSanPham_DonHang");
 
                 entity.HasOne(d => d.MaKhNavigation)
                     .WithMany(p => p.DanhGiaSanPhams)
@@ -115,6 +108,8 @@ namespace WebBanHang.Models
                 entity.Property(e => e.HoTen).HasMaxLength(250);
 
                 entity.Property(e => e.MaKh).HasColumnName("MaKH");
+
+                entity.Property(e => e.MaKm).HasColumnName("MaKM");
 
                 entity.Property(e => e.MaTt).HasColumnName("MaTT");
 
@@ -146,6 +141,11 @@ namespace WebBanHang.Models
                     .WithMany(p => p.DonHangs)
                     .HasForeignKey(d => d.MaKh)
                     .HasConstraintName("FK_DonHang_KhachHang");
+
+                entity.HasOne(d => d.MaKmNavigation)
+                    .WithMany(p => p.DonHangs)
+                    .HasForeignKey(d => d.MaKm)
+                    .HasConstraintName("FK_DonHang_KhuyenMai");
 
                 entity.HasOne(d => d.MaShipperNavigation)
                     .WithMany(p => p.DonHangs)
@@ -201,33 +201,19 @@ namespace WebBanHang.Models
 
             modelBuilder.Entity<KhuyenMai>(entity =>
             {
-                entity.HasKey(e => e.MaCtkm);
+                entity.HasKey(e => e.MaKm);
 
                 entity.ToTable("KhuyenMai");
 
-                entity.Property(e => e.MaCtkm).HasColumnName("MaCTKM");
+                entity.Property(e => e.MaKm).HasColumnName("MaKM");
 
-                entity.Property(e => e.Gtgiam).HasColumnName("GTGiam");
-
-                entity.Property(e => e.GttoiThieu).HasColumnName("GTToiThieu");
-
-                entity.Property(e => e.LoaiKm)
-                    .HasMaxLength(50)
-                    .HasColumnName("LoaiKM");
-
-                entity.Property(e => e.Ma)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.MaNhap).HasMaxLength(50);
 
                 entity.Property(e => e.MoTa).HasMaxLength(250);
 
-                entity.Property(e => e.NgayBd)
-                    .HasColumnType("datetime")
-                    .HasColumnName("NgayBD");
+                entity.Property(e => e.NgayBatDau).HasColumnType("date");
 
-                entity.Property(e => e.NgayKt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("NgayKT");
+                entity.Property(e => e.NgayKetThuc).HasColumnType("date");
             });
 
             modelBuilder.Entity<LoaiSanPham>(entity =>
