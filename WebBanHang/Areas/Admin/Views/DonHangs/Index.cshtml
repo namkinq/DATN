@@ -41,13 +41,13 @@
             <table class="table table-hover e-commerce-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Mã KH</th>
-                        <th>Ngày mua</th>
-                        <th>Ngày giao</th>
-                        <th>Tổng tiền</th>
-                        <th>Trạng thái</th>
-                        <th>#</th>
+                        <th style="font-weight:bold">ID</th>
+                        <th style="font-weight:bold">Mã KH</th>
+                        <th style="font-weight:bold">Ngày mua</th>
+                        <th style="font-weight:bold">Ngày giao</th>
+                        <th style="font-weight:bold">Tổng tiền</th>
+                        <th style="font-weight:bold">Trạng thái</th>
+                        <th style="font-weight:bold">#</th>
                     </tr>
                 </thead>
                 <tbody id="records_table">
@@ -56,7 +56,7 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td>#@item.MaDh</td>
+                                <td style="font-weight:bold">@item.MaDh</td>
                                 <td>@item.MaKh</td>
 
                                 <td>@item.NgayDat</td>

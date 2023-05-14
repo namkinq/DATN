@@ -72,7 +72,6 @@ namespace WebBanHang.Controllers
                     .Include(x=>x.MaTtNavigation)
                     .Include(x=>x.MaKhNavigation)
                     .Include(x=>x.MaShipperNavigation)
-                    .Include(x=>x.DanhGiaSanPhams)
                     .FirstOrDefaultAsync(m => m.MaDh == id && Convert.ToInt32(taikhoanID) == m.MaKh);
                 if(donhang == null)
                 {
@@ -194,7 +193,6 @@ namespace WebBanHang.Controllers
                 //
                 DanhGiaSanPham dgsp = new DanhGiaSanPham();
                 dgsp.MaKh = khachhang.MaKh;
-                dgsp.MaDh = donhang.MaDh;
                 dgsp.MaSp = masp;
                 dgsp.Diem = diem;
                 dgsp.NoiDung = noiDung;

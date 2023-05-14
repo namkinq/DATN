@@ -30,8 +30,8 @@
                 <div class="col-lg-3 order-lg-1 order-2 pt-10 pt-lg-0">
                     <div class="sidebar-area">
                         <div class="widgets-searchbox mb-9">
-                            <form id="widgets-searchbox" action="#">
-                                <input class="input-field" type="text" placeholder="Tìm">
+                            <form asp-controller="SanPham" asp-action="Index" method="get">
+                                <input class="input-field" name="searchKey" type="text" placeholder="Tìm">
                                 <button class="widgets-searchbox-btn" type="submit">
                                     <i class="pe-7s-search"></i>
                                 </button>

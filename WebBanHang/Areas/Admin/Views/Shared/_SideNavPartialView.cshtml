@@ -76,25 +76,14 @@
                     <span class="title">Thống kê</span>
                 </a>
             </li>
-            @*Quản lý khuyến mại*@
-            <li class="nav-item dropdown">
-                <a class="dropdown-toggle" href="javascript:void(0);">
+            @*Thống kê khuyến mại*@
+            <li class="nav-item">
+                <a class="dropdown-toggle" asp-area="Admin" asp-controller="KhuyenMais" asp-action="Index">
                     <span class="icon-holder">
                         <i class="anticon anticon-gift"></i>
                     </span>
-                    <span class="title">QL khuyến mại</span>
-                    <span class="arrow">
-                        <i class="arrow-icon"></i>
-                    </span>
+                    <span class="title">Khuyến mại</span>
                 </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a asp-area="Admin" asp-controller="KhuyenMais" asp-action="Index">Voucher</a>
-                    </li>
-                    <li>
-                        <a asp-area="Admin" asp-controller="KhuyenMais" asp-action="GiamGia">Giảm giá</a>
-                    </li>
-                </ul>
             </li>
             
 

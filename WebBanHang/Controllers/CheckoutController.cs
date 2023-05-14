@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using WebBanHang.Areas.Admin.Controllers;
 using WebBanHang.Extension;
 using WebBanHang.Models;
@@ -105,7 +106,7 @@ namespace WebBanHang.Controllers
 
         [HttpPost]
         [Route("checkout")]
-        public IActionResult Index(MuaHangVM muahang, int soTienGiamInput, int phiGiaoHangInput)
+        public IActionResult Index(MuaHangVM muahang, int soTienGiamInput, int phiGiaoHangInput, string macode)
         {
             //lấy giỏ
             var cart = HttpContext.Session.Get<List<CartItem>>("GioHang");
@@ -156,7 +157,16 @@ namespace WebBanHang.Controllers
 
                     donhang.TienShip = 50000;
                     donhang.GiamGiaShip = donhang.TienShip - phiGiaoHangInput;
+
                     donhang.GiamGia = soTienGiamInput;
+                    if (soTienGiamInput > 0)
+                    {
+                        var ma = _context.KhuyenMais.Where(x=>x.MaNhap==macode).FirstOrDefault();
+                        if (ma != null)
+                        {
+                            donhang.MaKm = ma.MaKm;
+                        }
+                    }
 
                     donhang.TongTien = Convert.ToInt32(cart.Sum(x => x.TotalMoney)) + donhang.TienShip - donhang.GiamGiaShip - donhang.GiamGia;
 
@@ -242,17 +252,29 @@ namespace WebBanHang.Controllers
                 try
                 {
                     var ma = _context.KhuyenMais.AsNoTracking()
-                    .SingleOrDefault(x => x.Ma.ToLower() == MaCode.ToLower());
+                    .SingleOrDefault(x => x.MaNhap.ToLower() == MaCode.ToLower());
                     if (ma != null)
                     {
-                        if (TongTien >= ma.GttoiThieu)
+                        if(DateTime.Now < ma.NgayBatDau)
                         {
-                            var tienGiam = ma.Gtgiam;
-                            return Json(new { success = true, tienGiam });
+                            return Json(new { success = false, error = "Chưa đến ngày áp dụng mã" });
+                        }
+                        else if(DateTime.Now > ma.NgayKetThuc )
+                        {
+                            return Json(new { success = false, error = " Đã hết hạn sử dụng" });
+                        }
+                        else if (ma.SoLuong <=0)
+                        {
+                            return Json(new { success = false, error = " Đã hết lượt sử dụng" });
+                        }
+                        else if (TongTien < ma.GiaTriToiThieu)
+                        {
+                            return Json(new { success = false, error = "Chưa đạt giá trị tối thiểu" }); 
                         }
                         else
                         {
-                            return Json(new { success = false, error = "Chưa đạt giá trị tối thiểu" });
+                            var tienGiam = ma.GiaTriGiam;
+                            return Json(new { success = true, tienGiam });
                         }
                     }
                     else
@@ -348,6 +370,7 @@ namespace WebBanHang.Controllers
                     donhang.TienShip = 50000;
                     donhang.GiamGiaShip = donhang.TienShip - phiGiaoHangInput;
                     donhang.GiamGia = soTienGiamInput;
+                    
 
                     donhang.TongTien = Convert.ToInt32(cart.Sum(x => x.TotalMoney)) + donhang.TienShip - donhang.GiamGiaShip - donhang.GiamGia;
 

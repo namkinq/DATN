@@ -45,7 +45,7 @@
                             <div class="coupon-info">
                                 <form action="javascript:void(0)" method="post">
                                     <p class="checkout-coupon">
-                                        <input id="macode" placeholder="CODE" type="text">
+                                        <input form="myform" id="macode" name="macode" placeholder="CODE" type="text">
                                         <input id="checkGG" class="coupon-inner_btn" value="Áp dụng" type="submit">
                                     </p>
                                 </form>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-            <form asp-controller="Checkout" asp-action="Index" method="post">
+            <form asp-controller="Checkout" asp-action="Index" method="post" id="myform">
                 <input hidden asp-for="CustomerId" />
                 <div class="row">
                     <div class="col-lg-6 col-12">

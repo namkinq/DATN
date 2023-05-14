@@ -43,7 +43,7 @@ namespace WebBanHang.Areas.Admin.Controllers
             }
 
             var khuyenMai = await _context.KhuyenMais
-                .FirstOrDefaultAsync(m => m.MaCtkm == id);
+                .FirstOrDefaultAsync(m => m.MaKm == id);
             if (khuyenMai == null)
             {
                 return NotFound();
@@ -63,11 +63,11 @@ namespace WebBanHang.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaCtkm,Ma,LoaiKm,MoTa,GttoiThieu,Gtgiam,NgayBd,NgayKt")] KhuyenMai khuyenMai)
+        public async Task<IActionResult> Create([Bind("MaKm,MoTa,MaNhap,SoLuong,GiaTriToiThieu,GiaTriGiam,NgayBatDau,NgayKetThuc")] KhuyenMai khuyenMai)
         {
             if (ModelState.IsValid)
             {
-                khuyenMai.Ma = khuyenMai.Ma.ToUpper();
+                khuyenMai.MaNhap = khuyenMai.MaNhap.ToUpper();
                 _context.Add(khuyenMai);
                 await _context.SaveChangesAsync();
                 _notyfService.Success("Tạo mới thành công");
@@ -97,9 +97,9 @@ namespace WebBanHang.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaCtkm,Ma,LoaiKm,MoTa,GttoiThieu,Gtgiam,NgayBd,NgayKt")] KhuyenMai khuyenMai)
+        public async Task<IActionResult> Edit(int id, [Bind("MaKm,MoTa,MaNhap,SoLuong,GiaTriToiThieu,GiaTriGiam,NgayBatDau,NgayKetThuc")] KhuyenMai khuyenMai)
         {
-            if (id != khuyenMai.MaCtkm)
+            if (id != khuyenMai.MaKm)
             {
                 return NotFound();
             }
@@ -114,7 +114,7 @@ namespace WebBanHang.Areas.Admin.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!KhuyenMaiExists(khuyenMai.MaCtkm))
+                    if (!KhuyenMaiExists(khuyenMai.MaKm))
                     {
                         _notyfService.Warning("Có lỗi xảy ra");
                         return NotFound();
@@ -138,7 +138,7 @@ namespace WebBanHang.Areas.Admin.Controllers
             }
 
             var khuyenMai = await _context.KhuyenMais
-                .FirstOrDefaultAsync(m => m.MaCtkm == id);
+                .FirstOrDefaultAsync(m => m.MaKm == id);
             if (khuyenMai == null)
             {
                 return NotFound();
@@ -171,7 +171,7 @@ namespace WebBanHang.Areas.Admin.Controllers
 
         private bool KhuyenMaiExists(int id)
         {
-            return _context.KhuyenMais.Any(e => e.MaCtkm == id);
+            return _context.KhuyenMais.Any(e => e.MaKm == id);
         }
 
 

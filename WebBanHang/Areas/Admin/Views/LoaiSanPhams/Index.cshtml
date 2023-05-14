@@ -30,10 +30,10 @@
             <table class="table table-hover e-commerce-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Tên</th>
-                        <th>Mô tả</th>
-                        <th>#</th>
+                        <th style="font-weight:bold">ID</th>
+                        <th style="font-weight:bold">Tên</th>
+                        <th style="font-weight:bold">Mô tả</th>
+                        <th style="font-weight:bold">#</th>
                     </tr>
                 </thead>
                 <tbody id="records_table">
@@ -42,7 +42,7 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.MaLoai</td>
+                                <td style="font-weight:bold">@item.MaLoai</td>
                                 <td>@item.TenLoai</td>
                                 <td>@item.MoTa</td>
                                 <td>
