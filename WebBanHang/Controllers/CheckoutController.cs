@@ -175,10 +175,11 @@ namespace WebBanHang.Controllers
                         ctdh.TongTien = item.TotalMoney;
                         //
                         SanPham hh = _context.SanPhams.SingleOrDefault(p => p.MaSp == item.product.MaSp);
-                        hh.SoLuongCo -= 1;
+                        hh.SoLuongCo -= item.amount;
+                        _context.Update(hh);
 
                         _context.Add(ctdh);
-                        _context.Update(hh);
+                        
                     }
 
                     _context.SaveChanges();

@@ -52,9 +52,9 @@
                                                     </td>
                                                     <td class="product-name"><a href="javascript:void(0)">@item.product.TenSp</a></td>
                                                     <td class="product-price"><span class="amount">@item.product.GiaGiam.Value.ToString("#,##0") đ</span></td>
-                                                    <td class="quantity">
-                                                        <div class="cart-plus-minus">
-                                                            <input data-mahh="@item.product.MaSp" data-dongia="@item.product.GiaGiam" class="cartItem cart-plus-minus-box" value="@item.amount" type="number">
+                                                    <td width="100px" class="quantity">
+                                                        <div>
+                                                            <input class="form-control cartItem" data-mahh="@item.product.MaSp" data-dongia="@item.product.GiaGiam" value="@item.amount" type="number">
                                                         </div>
                                                     </td>
                                                     <td class="product-subtotal"><span class="amount">@item.TotalMoney.ToString("#,##0")</span></td>
@@ -121,7 +121,7 @@
                 $("#numberCart").load("/AjaxContent/NumberCart");
             }
 
-            $(".cartItem").click(function () {
+            $(".cartItem").change(function () {
                 var productid = $(this).attr("data-mahh");
                 var soLuong = parseInt($(this).val());
 

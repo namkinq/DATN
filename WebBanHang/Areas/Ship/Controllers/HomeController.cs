@@ -189,11 +189,17 @@ namespace WebBanHang.Areas.Ship.Controllers
                     {
                         if (donhang.MaTt == 3)
                         {
-                            if(KQ=="TC")
+                            if (KQ == "TC")
+                            {
                                 donhang.MaTt = 4;
-                            if(KQ=="TB")
+                                donhang.NgayShip = DateTime.Now;
+                            }
+                                
+                            else if (KQ == "TB")
+                            {
                                 donhang.MaTt = 5;
 
+                            }
                             _context.Update(donhang);
                             _context.SaveChanges();
                             _notyfService.Success("Cập nhật trạng thái thành công");

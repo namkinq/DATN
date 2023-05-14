@@ -60,7 +60,7 @@
 
 
                                     <div class="form-group row">
-                                        <label class="col-sm-5 col-form-label">Trạng thái đơn hàng</label>
+                                        <label class="col-sm-5 col-form-label">Trạng thái đơn hàng:</label>
                                         <div class="col-sm-7">
                                             @if (Model.MaTt == 2)
                                             {
@@ -68,7 +68,7 @@
                                                     <option value="0" disabled selected>-Chọn trạng thái-</option>
                                                     @foreach (var item in ViewBag.lsTrangThai)
                                                     {
-                                                        if (item.Value == "1")
+                                                        if (item.Value == "1" || item.Value == "4" || item.Value == "5")
                                                         {
                                                             <option disabled value="@item.Value">@item.Text</option>
 
@@ -86,7 +86,7 @@
                                                     <option value="0" disabled selected>-Chọn trạng thái-</option>
                                                     @foreach (var item in ViewBag.lsTrangThai)
                                                     {
-                                                        if (item.Value == "1" || item.Value == "2")
+                                                        if (item.Value == "1" || item.Value == "2" || item.Value == "4" || item.Value == "5" || item.Value == "6")
                                                         {
                                                             <option disabled value="@item.Value">@item.Text</option>
 
@@ -104,7 +104,15 @@
                                                     <option value="0" disabled selected>-Chọn trạng thái-</option>
                                                     @foreach (var item in ViewBag.lsTrangThai)
                                                     {
-                                                        <option value="@item.Value">@item.Text</option>
+                                                        if (item.Value == "4" || item.Value == "5")
+                                                        {
+                                                            <option disabled value="@item.Value">@item.Text</option>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.Value">@item.Text</option>
+                                                        }
                                                     }
                                                 </select>
                                             }
@@ -112,7 +120,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label class="col-sm-5 col-form-label">Shipper</label>
+                                        <label class="col-sm-5 col-form-label">Shipper:</label>
                                         <div class="col-sm-7">
                                             <select class="select2" asp-for="MaShipper" asp-items="ViewBag.Shipper">
                                                 <option value="0" disabled selected>-Chọn shipper-</option>
@@ -120,6 +128,7 @@
 
                                         </div>
                                     </div>
+
                                     @if (Model.MaTt == 1 || Model.MaTt == 2 || Model.MaTt == 3)
                                     {
                                         <div class="form-group row">
@@ -130,11 +139,25 @@
                                     }
                                     else
                                     {
-                                        <div class="form-group row">
-                                            <div class="col-sm-5">
-                                                <button disabled type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                        @if (Model.MaTt == 4)
+                                        {
+                                            <div class="form-group row">
+                                                <label class="col-sm-5 col-form-label">Ngày giao:</label>
+                                                <label class="col-sm-7 col-form-label">@Model.NgayShip</label>
+                                                @*<div class="col-sm-5">
+                                                    <button disabled type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                                </div>*@
                                             </div>
-                                        </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="form-group row">
+                                                <div class="col-sm-5">
+                                                    <button disabled type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                                </div>
+                                            </div>
+                                        }
+
                                     }
 
                                 </form>

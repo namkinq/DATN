@@ -97,6 +97,10 @@ namespace WebBanHang.Controllers
                         {
                             item.amount = (int)hh.SoLuongCo;
                         }
+                        else if (amount.Value <= 0)
+                        {
+                            item.amount = 1;
+                        }
                         else
                         {
                             item.amount = amount.Value;

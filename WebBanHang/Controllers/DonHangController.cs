@@ -134,6 +134,19 @@ namespace WebBanHang.Controllers
                     _notyfService.Warning("Hủy thất bại");
                     return RedirectToAction("Dashboard", "Accounts");
                 }
+                var ctdh = _context.ChiTietDonHangs
+                    .AsNoTracking()
+                    .Where(x => x.MaDh == madh)
+                    .Include(x => x.MaSpNavigation)
+                    .OrderBy(x => x.MaSp)
+                    .ToList();
+                foreach(var item in ctdh)
+                {
+                    SanPham hh = _context.SanPhams.SingleOrDefault(p => p.MaSp == item.MaSp);
+                    hh.SoLuongCo += item.SoLuong;
+                    _context.Update(hh);
+                }
+
                 donhang.MaTt = 6;
 
                 _context.Update(donhang);

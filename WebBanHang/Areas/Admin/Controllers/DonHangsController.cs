@@ -211,13 +211,12 @@ namespace WebBanHang.Areas.Admin.Controllers
 
                                 ViewData["Shipper"] = new SelectList(_context.Shippers, "MaShipper", "TenHt", donHang.MaShipper);
                                 ViewData["lsTrangThai"] = new SelectList(_context.TrangThaiDonHangs, "MaTt", "TenTt", donhang.MaTt);
-                                return View(donhang);
+                                return RedirectToAction("ChangeStatus", id = donhang.MaDh);
                             }
                             else
                             {
                                 donhang.MaTt = donHang.MaTt;
                                 donhang.MaShipper = donHang.MaShipper;
-                                donhang.NgayShip = DateTime.Now;
                             }
                         }
                         else
