@@ -3,6 +3,7 @@
     ViewData["Title"] = "Mua hàng";
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<WebBanHang.ModelViews.CartItem> Carts = ViewBag.GioHang;
+    List<WebBanHang.Models.KhuyenMai> dsgg = ViewBag.DSGG;
 }
 
 <style type="text/css">
@@ -40,18 +41,24 @@
                 <div class="col-12">
                     <div class="coupon-accordion">
 
-                        <h3 style="font-family:Verdana">Bạn có mã giảm giá? <span id="showcoupon">Nhập mã <u>tại đây</u> </span></h3>
-                        <div id="checkout_coupon" class="coupon-checkout-content">
-                            <div class="coupon-info">
-                                <form action="javascript:void(0)" method="post">
-                                    <p class="checkout-coupon">
-                                        <input form="myform" id="macode" name="macode" placeholder="CODE" type="text">
-                                        <input id="checkGG" class="coupon-inner_btn" value="Áp dụng" type="submit">
-                                    </p>
-                                </form>
-                            </div>
-                        </div>
+                        <h3 style="font-family:Verdana">Mã giảm giá số lượng có hạn! Nhập ngay:
+                                @if(dsgg != null)
+                                {
+                                    foreach(var item in dsgg)
+                                    {
+                                    <span> "@item.MaNhap.ToUpper()" (Giảm @item.GiaTriGiam.Value.ToString("0,00#") đơn từ @item.GiaTriToiThieu.Value.ToString("0,00#")). </span>
+                                    }
+                                }
+
+                        </h3>
                     </div>
+                    
+                    <form action="javascript:void(0)" method="post">
+                        <p class="checkout-coupon">
+                            <input form="myform" id="macode" name="macode" placeholder="CODE" type="text">
+                            <input id="checkGG" class="btn btn-secondary" value="Áp dụng" type="submit">
+                        </p>
+                    </form>
                 </div>
             </div>
             <form asp-controller="Checkout" asp-action="Index" method="post" id="myform">
@@ -337,6 +344,7 @@
                             }
                             $("#tongDonHang").html(tongDonHang);
                             $("#tongDonHangInput").val(tongDonHangInput).trigger('change');
+                            alert("Áp dụng thành công");
 
                         }
                         else {

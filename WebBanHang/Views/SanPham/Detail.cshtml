@@ -6,7 +6,73 @@
     List<SanPham> lsSP = ViewBag.SanPham;
     List<DanhGiaSanPham> lsDG = ViewBag.DanhGia;
 }
+<style>
+    .rating {
+        display: inline-block;
+        position: relative;
+        height: 50px;
+        line-height: 50px;
+        font-size: 50px;
+    }
 
+        .rating label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            cursor: pointer;
+        }
+
+            .rating label:last-child {
+                position: static;
+            }
+
+            .rating label:nth-child(1) {
+                z-index: 5;
+            }
+
+            .rating label:nth-child(2) {
+                z-index: 4;
+            }
+
+            .rating label:nth-child(3) {
+                z-index: 3;
+            }
+
+            .rating label:nth-child(4) {
+                z-index: 2;
+            }
+
+            .rating label:nth-child(5) {
+                z-index: 1;
+            }
+
+            .rating label input {
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+            }
+
+            .rating label .icon {
+                float: left;
+                color: transparent;
+            }
+
+            .rating label:last-child .icon {
+                color: #000;
+            }
+
+        .rating:not(:hover) label input:checked ~ .icon,
+        .rating:hover label:hover input ~ .icon {
+            color: #4099a1;
+        }
+
+        .rating label input:focus:not(:checked) ~ .icon:last-child {
+            color: #000;
+            text-shadow: 0 0 5px #4099a1;
+        }
+</style>
 
 
 <!-- Begin Main Content Area  -->
@@ -176,7 +242,8 @@
                                                 <ul class="user-info">
                                                     <li class="user-comment">
                                                         <div class="rating-box">
-                                                            @if(item.Diem ==0){
+                                                            @if (item.Diem == 0)
+                                                            {
                                                                 <ul>
                                                                     <li><i class="fa fa-star-o"></i></li>
                                                                     <li><i class="fa fa-star-o"></i></li>
@@ -262,6 +329,70 @@
 
         </div>
     </div>
+
+    <div class="button-wrap mt-8" style="text-align:center">
+        <button type="button" value="Viết đánh giá" class="btn btn-custom-size lg-size btn-secondary btn-primary-hover btn-lg rounded-0" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="mdo">Viết đánh giá</button>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 style="font-family:Verdana" class="modal-title" id="exampleModalLabel">Đánh giá sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+               
+                <div class="modal-body">
+                    <form id="danhgia" method="post" action="/sanpham/danhgia">
+                        <input hidden id="id" name="id" value="@Model.MaSp" type="text">
+                        <div>
+                            <label for="recipient-name" class="col-form-label">Đánh giá</label>
+                        </div>
+                        <div class="rating">
+                            <label>
+                                <input type="radio" name="diem" value="1" />
+                                <span class="icon">★</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="diem" value="2" />
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="diem" value="3" />
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="diem" value="4" />
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="diem" value="5" checked />
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                                <span class="icon">★</span>
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="noiDung" class="col-form-label">Bình luận</label>
+                            <textarea required rows="5" class="form-control" id="noiDung" name="noiDung"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button form="danhgia" type="submit" class="btn btn-primary">Viết đánh giá</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="product-slider-area section-space-top-95 section-space-bottom-100">
         <div class="container">
             <div class="section-title text-center pb-55">

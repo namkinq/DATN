@@ -163,54 +163,6 @@ namespace WebBanHang.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DanhGia(int? madh, int masp, byte diem, string noiDung)
-        {
-            if (madh == null)
-            {
-                return RedirectToAction("Dashboard", "Accounts");
-            }
-            try
-            {
-                var taikhoanID = HttpContext.Session.GetString("CustomerId");
-                if (string.IsNullOrEmpty(taikhoanID))
-                {
-                    return RedirectToAction("DangNhap", "Accounts");
-                }
-                var khachhang = _context.KhachHangs.AsNoTracking()
-                    .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
-                if (khachhang == null)
-                {
-                    return NotFound();
-                }
-                //
-                var donhang = await _context.DonHangs
-                    .FirstOrDefaultAsync(m => m.MaDh == madh && Convert.ToInt32(taikhoanID) == m.MaKh);
-                if (donhang == null)
-                {
-                    return RedirectToAction("Dashboard", "Accounts");
-                }
-                //
-                DanhGiaSanPham dgsp = new DanhGiaSanPham();
-                dgsp.MaKh = khachhang.MaKh;
-                dgsp.MaSp = masp;
-                dgsp.Diem = diem;
-                dgsp.NoiDung = noiDung;
-                dgsp.ThoiGian = DateTime.Now;
-
-                _context.Add(dgsp);
-                _context.SaveChanges();
-
-                _notyfService.Success("Đánh giá thành công");
-
-                return RedirectToAction("Dashboard", "Accounts");
-
-            }
-            catch
-            {
-                return RedirectToAction("Dashboard", "Accounts");
-            }
-
-        }
+        
     }
 }

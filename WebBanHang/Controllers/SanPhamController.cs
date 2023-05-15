@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PagedList.Core;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using WebBanHang.Models;
 
 namespace WebBanHang.Controllers
@@ -9,9 +13,11 @@ namespace WebBanHang.Controllers
     public class SanPhamController : Controller
     {
         private readonly dbBanHangContext _context;
-        public SanPhamController(dbBanHangContext context)
+        public INotyfService _notyfService { get; }
+        public SanPhamController(dbBanHangContext context, INotyfService notyfService)
         {
             _context = context;
+            _notyfService = notyfService;
         }
 
         [Route("sanpham")]
@@ -163,5 +169,52 @@ namespace WebBanHang.Controllers
             }
 
         }
+
+        [HttpPost]
+        [Route("sanpham/danhgia")]
+        public async Task<IActionResult> DanhGia(int? id, byte diem, string noiDung)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index", "SanPham");
+            }
+            try
+            {
+                var taikhoanID = HttpContext.Session.GetString("CustomerId");
+                if (string.IsNullOrEmpty(taikhoanID))
+                {
+                    return RedirectToAction("DangNhap", "Accounts");
+                }
+                var khachhang = _context.KhachHangs.AsNoTracking()
+                    .SingleOrDefault(x => x.MaKh == Convert.ToInt32(taikhoanID));
+                if (khachhang == null)
+                {
+                    return NotFound();
+                }
+                //
+                
+                //
+                DanhGiaSanPham dgsp = new DanhGiaSanPham();
+                dgsp.MaKh = khachhang.MaKh;
+                dgsp.MaSp = id;
+                dgsp.Diem = diem;
+                dgsp.NoiDung = noiDung;
+                dgsp.ThoiGian = DateTime.Now;
+
+                _context.Add(dgsp);
+                _context.SaveChanges();
+
+                _notyfService.Success("Đánh giá thành công");
+
+                return RedirectToAction("Detail", "SanPham", new { id = id });
+
+            }
+            catch
+            {
+                return RedirectToAction("Index", "SanPham", new { id = id });
+            }
+
+        }
+
     }
 }

@@ -99,7 +99,11 @@ namespace WebBanHang.Controllers
                 }
             }
 
-
+            var dsgg = _context.KhuyenMais
+                .AsNoTracking()
+                .Where(x => DateTime.Now >= x.NgayBatDau && DateTime.Now < x.NgayKetThuc)
+                .ToList();
+            ViewBag.DSGG = dsgg;
             ViewBag.GioHang = cart;
             return View(model);
         }
