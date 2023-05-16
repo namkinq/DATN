@@ -10,6 +10,9 @@ namespace WebBanHang.ModelViews
         public string FullName { get; set; }
         public string Email { get; set; }
 
+        [MaxLength(10)]
+        [MinLength(10, ErrorMessage = "Số điện thoại gồm 10 chữ số")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Số điện thoại phải là số")]
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
         public string Phone { get; set; }
 

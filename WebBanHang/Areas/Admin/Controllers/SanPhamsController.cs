@@ -132,6 +132,11 @@ namespace WebBanHang.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(sanPham.GiaGiam >= sanPham.GiaBan)
+                {
+                    _notyfService.Warning("Giá giảm phải nhỏ hơn giá bán");
+                    return View(sanPham);
+                }
                 sanPham.TenSp = Utilities.ToTitleCase(sanPham.TenSp);
                 if(fAnh != null)
                 {

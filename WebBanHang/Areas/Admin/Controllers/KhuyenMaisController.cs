@@ -67,6 +67,12 @@ namespace WebBanHang.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(_context.KhuyenMais.Where(x=>x.MaNhap.ToUpper() == khuyenMai.MaNhap.ToUpper()) != null)
+                {
+                    _notyfService.Warning("Mã nhập trùng");
+                    return View(khuyenMai);
+                }
+
                 khuyenMai.MaNhap = khuyenMai.MaNhap.ToUpper();
                 _context.Add(khuyenMai);
                 await _context.SaveChangesAsync();

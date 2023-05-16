@@ -14,11 +14,11 @@ namespace WebBanHang.ModelViews
         public string PasswordNow { get; set; }
 
         [Display(Name = "Mật khẩu mới")]
-        [MinLength(6, ErrorMessage = "Bạn cần đặt mật khẩu tối thiểu 5 ký tự")]
+        [MinLength(6, ErrorMessage = "Bạn cần đặt mật khẩu tối thiểu 6 ký tự")]
         public string Password { get; set; }
 
 
-        [MinLength(6, ErrorMessage = "Bạn cần đặt mật khẩu tối thiểu 5 ký tự")]
+        [MinLength(6, ErrorMessage = "Bạn cần đặt mật khẩu tối thiểu 6 ký tự")]
         [Display(Name = "Nhập lại mật khẩu mới")]
         [Compare("Password", ErrorMessage = "Mật khẩu không giống nhau")]
         public string ConfirmPassword { get; set; }

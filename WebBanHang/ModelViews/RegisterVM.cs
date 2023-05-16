@@ -21,9 +21,10 @@ namespace WebBanHang.ModelViews
         public string Email { get; set; }
 
         [MaxLength(10)]
+        [MinLength(10, ErrorMessage = "Số điện thoại gồm 10 chữ số")]
         [Display(Name = "Số điện thoại")]
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
-        [DataType(DataType.PhoneNumber)]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Số điện thoại phải là số")]
         [Remote(action: "ValidatePhone", controller: "Accounts", ErrorMessage = "SĐT đã được sử dụng")]
         public string Phone { get; set; }
 

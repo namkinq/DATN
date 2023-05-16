@@ -157,6 +157,7 @@ namespace WebBanHang.Controllers
                     .AsNoTracking()
                     .Where(x=>x.MaSp==id)
                     .OrderByDescending(x=>x.MaDg)
+                    .Take(5)
                     .ToList();
                 ViewBag.DanhGia = lsDG;
 
